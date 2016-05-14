@@ -1,6 +1,6 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.farmafene.aurius</groupId>
+	<groupId>com.farmafene.aurius.misc</groupId>
 	<artifactId>aurius-soa</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
@@ -221,6 +221,18 @@
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
+				<groupId>com.farmafene.aurius</groupId>
+				<artifactId>aurius-api</artifactId>
+				<version>${project.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.farmafene.aurius</groupId>
+				<artifactId>aurius-api-server</artifactId>
+				<version>${project.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
 				<groupId>org.slf4j</groupId>
 				<artifactId>slf4j-api</artifactId>
 				<version>${slf4j-api.VERSION}</version>
@@ -282,5 +294,6 @@
 	</dependencyManagement>
 	<modules>
 		<module>aurius-api</module>
+		<module>aurius-api-server</module>
 	</modules>
 </project>
