@@ -1,0 +1,37 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.farmafene.aurius</groupId>
+		<artifactId>aurius-soa</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<artifactId>aurius-api</artifactId>
+	<description>Module: ${project.name}</description>
+	<name>${project.groupId}:${project.artifactId}:${project.version}:${project.packaging}</name>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>delete-dummy</id>
+						<phase>process-classes</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<tasks>
+						<echo>Eliminando implementación dummy</echo>
+						<delete
+							dir="${project.build.directory}/classes/com/farmafene/aurius/impl" />
+					</tasks>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>
