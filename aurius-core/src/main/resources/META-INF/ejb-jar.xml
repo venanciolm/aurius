@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ejb-jar id="ejb-jar_ID" version="2.1"
+	xmlns="http://java.sun.com/xml/ns/j2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/j2ee http://java.sun.com/xml/ns/j2ee/ejb-jar_2_1.xsd">
+	<display-name>aurius-core</display-name>
+	<enterprise-beans>
+		<session id="Diccionario">
+			<ejb-name>Diccionario</ejb-name>
+			<local-home>com.farmafene.aurius.core.DiccionarioLocalHome</local-home>
+			<local>com.farmafene.aurius.core.DiccionarioLocal</local>
+			<ejb-class>com.farmafene.aurius.core.DiccionarioBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Container</transaction-type>
+			<resource-env-ref id="ResourceEnvRef_1385108656909">
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+			</resource-env-ref>
+			<resource-env-ref id="ResourceEnvRef_1385108656910">
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<resource-env-ref-type>java.net.URL</resource-env-ref-type>
+			</resource-env-ref>
+		</session>
+		<session id="GestorTx">
+			<ejb-name>GestorTx</ejb-name>
+			<local-home>com.farmafene.aurius.core.GestorTxLocalHome</local-home>
+			<local>com.farmafene.aurius.core.GestorTxLocal</local>
+			<ejb-class>com.farmafene.aurius.core.GestorTxBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Container</transaction-type>
+			<ejb-local-ref id="GestorTx_refDiccionario">
+				<description>Referencia local al Gestor de Transacciones</description>
+				<ejb-ref-name>farmafene.com/aurius/ejb/Diccionario</ejb-ref-name>
+				<ejb-ref-type>Session</ejb-ref-type>
+				<local-home>com.farmafene.aurius.core.DiccionarioLocalHome</local-home>
+				<local>com.farmafene.aurius.core.DiccionarioLocal</local>
+			</ejb-local-ref>
+			<resource-env-ref id="ResourceEnvRef_1385108656911">
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+			</resource-env-ref>
+			<resource-env-ref id="ResourceEnvRef_1385108656912">
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<resource-env-ref-type>java.net.URL</resource-env-ref-type>
+			</resource-env-ref>
+		</session>
+		<message-driven id="AuriusJCA">
+			<ejb-name>AuriusJCA</ejb-name>
+			<ejb-class>com.farmafene.aurius.jca.AuriusMDB</ejb-class>
+			<messaging-type>com.farmafene.aurius.jca.AuriusListener</messaging-type>
+			<transaction-type>Container</transaction-type>
+			<activation-config>
+				<activation-config-property>
+					<activation-config-property-name>confFile</activation-config-property-name>
+					<activation-config-property-value>JCA</activation-config-property-value>
+				</activation-config-property>
+			</activation-config>
+			<ejb-local-ref id="AuriusJCA_refGestorTx">
+				<description>Referencia local al Gestor de Transacciones</description>
+				<ejb-ref-name>farmafene.com/aurius/ejb/GestorTx</ejb-ref-name>
+				<ejb-ref-type>Session</ejb-ref-type>
+				<local-home>com.farmafene.aurius.core.GestorTxLocalHome</local-home>
+				<local>com.farmafene.aurius.core.GestorTxLocal</local>
+				<ejb-link>aurius-core.jar#GestorTx</ejb-link>
+			</ejb-local-ref>
+			<ejb-local-ref id="AuriusJCA_refDiccionario">
+				<description>Referencia local al Gestor de Transacciones</description>
+				<ejb-ref-name>farmafene.com/aurius/ejb/Diccionario</ejb-ref-name>
+				<ejb-ref-type>Session</ejb-ref-type>
+				<local-home>com.farmafene.aurius.core.DiccionarioLocalHome</local-home>
+				<local>com.farmafene.aurius.core.DiccionarioLocal</local>
+				<ejb-link>aurius-core.jar#Diccionario</ejb-link>
+			</ejb-local-ref>
+			<resource-env-ref id="ResourceEnvRef_1385108656913">
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<resource-env-ref-type>javax.sql.DataSource</resource-env-ref-type>
+			</resource-env-ref>
+			<resource-env-ref id="ResourceEnvRef_1385108656914">
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<resource-env-ref-type>java.net.URL</resource-env-ref-type>
+			</resource-env-ref>
+		</message-driven>
+	</enterprise-beans>
+	<assembly-descriptor>
+		<container-transaction>
+			<method>
+				<description>Llamadas al diccionario</description>
+				<ejb-name>Diccionario</ejb-name>
+				<method-intf>Local</method-intf>
+				<method-name>*</method-name>
+			</method>
+			<trans-attribute>Mandatory</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<description>Llamadas al Gestor</description>
+				<ejb-name>GestorTx</ejb-name>
+				<method-intf>Local</method-intf>
+				<method-name>*</method-name>
+			</method>
+			<trans-attribute>Mandatory</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<description>Llamadas al JCA</description>
+				<ejb-name>AuriusJCA</ejb-name>
+				<method-intf>ServiceEndpoint</method-intf>
+				<method-name>invoke</method-name>
+				<method-params>
+					<method-param>com.farmafene.aurius.core.ContextoCore</method-param>
+					<method-param>java.lang.String</method-param>
+					<method-param>java.lang.String</method-param>
+					<method-param>com.farmafene.aurius.Registro</method-param>
+				</method-params>
+			</method>
+			<trans-attribute>Required</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<description>Llamadas al JCA</description>
+				<ejb-name>AuriusJCA</ejb-name>
+				<method-intf>ServiceEndpoint</method-intf>
+				<method-name>getRegistro</method-name>
+				<method-params>
+					<method-param>com.farmafene.aurius.AuthInfo</method-param>
+					<method-param>java.lang.String</method-param>
+				</method-params>
+			</method>
+			<trans-attribute>Required</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<description>Llamadas al JCA</description>
+				<ejb-name>AuriusJCA</ejb-name>
+				<method-intf>ServiceEndpoint</method-intf>
+				<method-name>getRegistro</method-name>
+				<method-params>
+					<method-param>com.farmafene.aurius.AuthInfo</method-param>
+					<method-param>java.lang.String</method-param>
+					<method-param>java.lang.String</method-param>
+				</method-params>
+			</method>
+			<trans-attribute>Required</trans-attribute>
+		</container-transaction>
+	</assembly-descriptor>
+</ejb-jar>

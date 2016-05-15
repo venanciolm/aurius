@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<com.ibm.ejs.models.base.bindings.ejbbnd:EJBJarBinding
+	xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI"
+	xmlns:com.ibm.ejs.models.base.bindings.ejbbnd="ejbbnd.xmi"
+	xmlns:org.eclipse.jst.j2ee.common="common.xmi"
+	xmlns:org.eclipse.jst.j2ee.ejb="ejb.xmi" xmi:id="EJBJarBinding_1385108656904">
+	<ejbJar href="META-INF/ejb-jar.xml#ejb-jar_ID" />
+	<ejbBindings xmi:id="EnterpriseBeanBinding_1385108656908"
+		jndiName="farmafene.com/aurius/ejb/Diccionario">
+		<enterpriseBean xmi:type="org.eclipse.jst.j2ee.ejb:Session"
+			href="META-INF/ejb-jar.xml#Diccionario" />
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656909"
+			jndiName="farmafene.com/aurius/jdbc/XA/common">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656909" />
+		</resourceEnvRefBindings>
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656910"
+			jndiName="farmafene.com/conf/was/file">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656910" />
+		</resourceEnvRefBindings>
+	</ejbBindings>
+	<ejbBindings xmi:id="EnterpriseBeanBinding_1385108656909"
+		jndiName="farmafene.com/aurius/ejb/GestorTx">
+		<enterpriseBean xmi:type="org.eclipse.jst.j2ee.ejb:Session"
+			href="META-INF/ejb-jar.xml#GestorTx" />
+		<ejbRefBindings xmi:id="EjbRefBinding_1385108656910"
+			jndiName="farmafene.com/aurius/ejb/Diccionario">
+			<bindingEjbRef xmi:type="org.eclipse.jst.j2ee.common:EJBLocalRef"
+				href="META-INF/ejb-jar.xml#GestorTx_refDiccionario" />
+		</ejbRefBindings>
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656911"
+			jndiName="farmafene.com/aurius/jdbc/XA/common">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656911" />
+		</resourceEnvRefBindings>
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656912"
+			jndiName="farmafene.com/conf/was/file">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656912" />
+		</resourceEnvRefBindings>
+	</ejbBindings>
+	<ejbBindings
+		xmi:type="com.ibm.ejs.models.base.bindings.ejbbnd:MessageDrivenBeanBinding"
+		xmi:id="MessageDrivenBeanBinding_1385108656910"
+		activationSpecJndiName="farmafene.com/aurius/AuriusJCA"
+		destinationJndiName="farmafene.com/aurius/eis">
+		<enterpriseBean xmi:type="org.eclipse.jst.j2ee.ejb:MessageDriven"
+			href="META-INF/ejb-jar.xml#AuriusJCA" />
+		<ejbRefBindings xmi:id="EjbRefBinding_1385108656911"
+			jndiName="farmafene.com/aurius/ejb/GestorTx">
+			<bindingEjbRef xmi:type="org.eclipse.jst.j2ee.common:EJBLocalRef"
+				href="META-INF/ejb-jar.xml#AuriusJCA_refGestorTx" />
+		</ejbRefBindings>
+		<ejbRefBindings xmi:id="EjbRefBinding_1385108656912"
+			jndiName="farmafene.com/aurius/ejb/Diccionario">
+			<bindingEjbRef xmi:type="org.eclipse.jst.j2ee.common:EJBLocalRef"
+				href="META-INF/ejb-jar.xml#AuriusJCA_refDiccionario" />
+		</ejbRefBindings>
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656913"
+			jndiName="farmafene.com/aurius/jdbc/XA/common">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656913" />
+		</resourceEnvRefBindings>
+		<resourceEnvRefBindings xmi:id="ResourceEnvRefBinding_1385108656914"
+			jndiName="farmafene.com/conf/was/file">
+			<bindingResourceEnvRef
+				href="META-INF/ejb-jar.xml#ResourceEnvRef_1385108656914" />
+		</resourceEnvRefBindings>
+	</ejbBindings>
+</com.ibm.ejs.models.base.bindings.ejbbnd:EJBJarBinding>

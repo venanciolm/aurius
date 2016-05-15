@@ -1,0 +1,106 @@
+<jboss:ejb-jar xmlns:jboss="http://www.jboss.com/xml/ns/javaee"
+	xmlns="http://java.sun.com/xml/ns/javaee" xmlns:mdb="urn:resource-adapter-binding"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+		http://www.jboss.com/xml/ns/javaee ./jboss-ejb3-2_0.xsd
+		http://java.sun.com/xml/ns/javaee ./jboss-ejb3-spec-2_0.xsd
+		urn:resource-adapter-binding ./jboss-ejb-resource-adapter-binding_1_0.xsd"
+	version="3.1" impl-version="2.0">
+	<display-name>aurius-core</display-name>
+	<enterprise-beans>
+		<session id="Diccionario">
+			<ejb-name>Diccionario</ejb-name>
+			<local-home>com.farmafene.aurius.core.DiccionarioLocalHome</local-home>
+			<local>com.farmafene.aurius.core.DiccionarioLocal</local>
+			<ejb-class>com.farmafene.aurius.core.DiccionarioBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Container</transaction-type>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/aurius/jdbc/XA/common</lookup-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/conf/jboss/file</lookup-name>
+			</resource-env-ref>
+		</session>
+		<session id="GestorTx">
+			<ejb-name>GestorTx</ejb-name>
+			<local-home>com.farmafene.aurius.core.GestorTxLocalHome</local-home>
+			<local>com.farmafene.aurius.core.GestorTxLocal</local>
+			<ejb-class>com.farmafene.aurius.core.GestorTxBean</ejb-class>
+			<session-type>Stateless</session-type>
+			<transaction-type>Container</transaction-type>
+			<ejb-local-ref id="GestorTx_refDiccionario">
+				<ejb-ref-name>farmafene.com/aurius/ejb/Diccionario</ejb-ref-name>
+				<mapped-name>farmafene.com/aurius/ejb/Diccionario</mapped-name>
+				<lookup-name>java:module/Diccionario!com.farmafene.aurius.core.DiccionarioLocalHome</lookup-name>
+			</ejb-local-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/aurius/jdbc/XA/common</lookup-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/conf/jboss/file</lookup-name>
+			</resource-env-ref>
+		</session>
+		<message-driven id="AuriusJCA">
+			<ejb-name>AuriusJCA</ejb-name>
+			<ejb-class>com.farmafene.aurius.jca.AuriusMDB</ejb-class>
+			<messaging-type>com.farmafene.aurius.jca.AuriusListener</messaging-type>
+			<transaction-type>Container</transaction-type>
+			<activation-config>
+				<activation-config-property>
+					<activation-config-property-name>confFile</activation-config-property-name>
+					<activation-config-property-value>JCA</activation-config-property-value>
+				</activation-config-property>
+			</activation-config>
+			<ejb-local-ref id="AuriusJCA_refGestorTx">
+				<ejb-ref-name>farmafene.com/aurius/ejb/GestorTx</ejb-ref-name>
+				<mapped-name>farmafene.com/aurius/ejb/GestorTx</mapped-name>
+				<lookup-name>java:module/GestorTx!com.farmafene.aurius.core.GestorTxLocalHome</lookup-name>
+			</ejb-local-ref>
+			<ejb-local-ref id="AuriusJCA_refDiccionario">
+				<ejb-ref-name>farmafene.com/aurius/ejb/Diccionario</ejb-ref-name>
+				<mapped-name>farmafene.com/aurius/ejb/Diccionario</mapped-name>
+				<lookup-name>java:module/Diccionario!com.farmafene.aurius.core.DiccionarioLocalHome</lookup-name>
+			</ejb-local-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/aurius/jdbc/XA/common</lookup-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<lookup-name>java:jboss/farmafene.com/conf/jboss/file</lookup-name>
+			</resource-env-ref>
+		</message-driven>
+	</enterprise-beans>
+	<assembly-descriptor>
+		<mdb:resource-adapter-binding>
+			<ejb-name>AuriusJCA</ejb-name>
+			<mdb:resource-adapter-name>aurius.ear#aurius-jca-ra.rar</mdb:resource-adapter-name>
+		</mdb:resource-adapter-binding>
+		<container-transaction>
+			<method>
+				<ejb-name>Diccionario</ejb-name>
+				<method-name>*</method-name>
+			</method>
+			<trans-attribute>Mandatory</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<ejb-name>GestorTx</ejb-name>
+				<method-name>*</method-name>
+			</method>
+			<trans-attribute>Mandatory</trans-attribute>
+		</container-transaction>
+		<container-transaction>
+			<method>
+				<ejb-name>AuriusJCA</ejb-name>
+				<method-name>*</method-name>
+			</method>
+			<trans-attribute>Required</trans-attribute>
+		</container-transaction>
+	</assembly-descriptor>
+</jboss:ejb-jar>

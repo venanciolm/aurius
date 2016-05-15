@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jboss SYSTEM "jboss_4_2.dtd">
+<jboss>
+	<enterprise-beans>
+		<session id="Diccionario">
+			<ejb-name>Diccionario</ejb-name>
+			<local-jndi-name>farmafene.com/aurius/ejb/Diccionario</local-jndi-name>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/aurius/jdbc/XA/common</jndi-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/conf/jboss/file</jndi-name>
+			</resource-env-ref>
+		</session>
+		<session id="GestorTx">
+			<ejb-name>GestorTx</ejb-name>
+			<local-jndi-name>farmafene.com/aurius/ejb/GestorTx</local-jndi-name>
+			<ejb-local-ref>
+				<ejb-ref-name>farmafene.com/aurius/ejb/Diccionario</ejb-ref-name>
+				<local-jndi-name>farmafene.com/aurius/ejb/Diccionario</local-jndi-name>
+			</ejb-local-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/aurius/jdbc/XA/common</jndi-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/conf/jboss/file</jndi-name>
+			</resource-env-ref>
+		</session>
+		<message-driven id="AuriusJCA">
+			<ejb-name>AuriusJCA</ejb-name>
+			<resource-adapter-name>aurius.ear#aurius-jca-ra.rar</resource-adapter-name>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/jdbc/XA/common</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/aurius/jdbc/XA/common</jndi-name>
+			</resource-env-ref>
+			<resource-env-ref>
+				<resource-env-ref-name>farmafene.com/aurius/conf</resource-env-ref-name>
+				<jndi-name>java:/farmafene.com/conf/jboss/file</jndi-name>
+			</resource-env-ref>
+		</message-driven>
+	</enterprise-beans>
+</jboss>
