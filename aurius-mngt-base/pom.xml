@@ -10,10 +10,6 @@
 	<groupId>com.farmafene.aurius.mngt</groupId>
 	<artifactId>aurius-mngt-base</artifactId>
 	<name>${project.groupId}:${project.artifactId}:${project.version}:${project.packaging}</name>
-	<properties>
-		<xstream.version>1.4.7</xstream.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 	<build>
 		<plugins>
 			<plugin>

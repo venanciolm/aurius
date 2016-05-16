@@ -12,6 +12,7 @@
 		<module>aurius-api-core</module>
 		<module>aurius-mngt-base</module>
 		<module>aurius-core</module>
+		<module>aurius-common</module>
 	</modules>
 	<properties>
 		<!-- -->
