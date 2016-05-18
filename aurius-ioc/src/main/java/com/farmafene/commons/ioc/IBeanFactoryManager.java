@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,17 +21,14 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
+package com.farmafene.commons.ioc;
 
-public interface IAuriusBeanFactory {
+/**
+ * 
+ * Localizador de implemtaciones de clases
+ */
+public interface IBeanFactoryManager {
 
-	<M extends Object> M getBean(Class<M> clazz);
+	public void setTestMode(IBeanFactoryParams testParams);
 
-	Object getBean(String id);
-
-	public void destroy();
-
-	public boolean forceInit();
-
-	public boolean isInit();
 }

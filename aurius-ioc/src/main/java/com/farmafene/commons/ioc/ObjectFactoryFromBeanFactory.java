@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,7 +21,7 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
+package com.farmafene.commons.ioc;
 
 import java.util.Hashtable;
 import java.util.logging.Level;
@@ -32,37 +32,44 @@ import javax.naming.Name;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
-/**
- * ObjectFactory para la publicación en JNDI de objetos de configuración
- * 
- * @author vlopez
- * @since 1.0.0
- * @version 1.0.0
- */
-public class AuriusBeanFactoryObjectFactory implements ObjectFactory {
-
+public class ObjectFactoryFromBeanFactory implements ObjectFactory {
 	private static final Logger logger = Logger
-			.getLogger(AuriusBeanFactoryObjectFactory.class.getName());
+			.getLogger(ObjectFactoryFromBeanFactory.class.getName());
 
-	public AuriusBeanFactoryObjectFactory() {
-		if (logger.isLoggable(Level.FINEST)) {
-			logger.finest(this + "<init>");
-		}
+	public ObjectFactoryFromBeanFactory() {
+
 	}
 
 	/**
 	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
 	 */
-	public Object getObjectInstance(Object reference, Name binding,
-			Context ctx, Hashtable<?, ?> enviroment) throws Exception {
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName()).append("={");
+		sb.append("}");
+		return sb.toString();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see javax.naming.spi.ObjectFactory#getObjectInstance(java.lang.Object,
+	 *      javax.naming.Name, javax.naming.Context, java.util.Hashtable)
+	 */
+	@Override
+	public Object getObjectInstance(Object reference, Name name,
+			Context nameCtx, Hashtable<?, ?> environment) throws Exception {
 		Object getObjectInstance = null;
-		if (AuriusBeanFactory.getIAuriusBeanFactory().isInit()) {
+		if (BeanFactory.getIBeanFactory().isInit()) {
 			Reference ref = (Reference) reference;
 			String value = (String) ref.get("uniqueName").getContent();
 			try {
-				getObjectInstance = AuriusBeanFactory.getBean(value);
+				getObjectInstance = BeanFactory.getBean(Object.class, value);
 			} catch (Throwable th) {
-				logger.log(Level.SEVERE, "Excepción en la ObjectFactory", th);
+				logger.log(Level.SEVERE, "ExcepciÃ³n en la ObjectFactory", th);
 			}
 		}
 		if (logger.isLoggable(Level.FINEST)) {

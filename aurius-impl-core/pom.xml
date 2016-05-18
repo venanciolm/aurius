@@ -16,7 +16,7 @@
 			<artifactId>aurius-common</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>com.farmafene.aurius.impl</groupId>
+			<groupId>com.farmafene.aurius.commons.impl</groupId>
 			<artifactId>aurius-ioc-spring</artifactId>
 		</dependency>
 		<dependency>

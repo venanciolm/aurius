@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,36 +21,8 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
+package com.farmafene.commons.ioc;
 
-import javax.servlet.ServletContextEvent;
-import javax.servlet.ServletContextListener;
+public interface IBeanFactoryParams {
 
-/**
- * Gestiona {@link AuriusBeanFactory}, para eliminar (si existe) los beans
- * creados
- * 
- * @author vlopez
- * @version 1.0.0
- * @since 1.0.0
- * 
- */
-public class AuriusBeanFactoryListener implements ServletContextListener {
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @since 1.0.0
-	 */
-	public void contextDestroyed(ServletContextEvent event) {
-		AuriusBeanFactory.getIAuriusBeanFactory().destroy();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @since 1.0.0
-	 */
-	public void contextInitialized(ServletContextEvent event) {
-	}
 }

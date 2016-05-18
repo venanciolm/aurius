@@ -34,8 +34,9 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 import com.farmafene.aurius.core.IAplicacionHolder;
 import com.farmafene.aurius.core.IAplicacionHolderPlugin;
-import com.farmafene.aurius.ioc.IAuriusBeanFactory;
 import com.farmafene.aurius.server.Configuracion;
+import com.farmafene.commons.ioc.IBeanFactory;
+import com.farmafene.commons.ioc.IBeanFactoryLifecycleListener;
 
 /**
  * Plugin de adaptación para una factoría de Spring
@@ -43,7 +44,7 @@ import com.farmafene.aurius.server.Configuracion;
  * @author vlopez@farmafene.com
  */
 public class AplicacionHolderBeanFactory implements IAplicacionHolderPlugin,
-		IAuriusBeanFactory {
+		IBeanFactory {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AplicacionHolderBeanFactory.class);
@@ -150,6 +151,30 @@ public class AplicacionHolderBeanFactory implements IAplicacionHolderPlugin,
 
 			}
 			logger.error("getBean(Class<?>:'" + clazz + "')", e);
+		}
+		return salida;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * @see com.farmafene.commons.ioc.IBeanFactory#getBean(java.lang.String)
+	 */
+	@Override
+	public <O> O getBean(String beanId) {
+		O salida = null;
+		try {
+			@SuppressWarnings("unchecked")
+			O bean = (O)getBeanFactory().getBean(beanId);
+			salida = bean;
+		} catch (NoSuchBeanDefinitionException e) {
+			// do nothing
+		} catch (IllegalStateException th) {
+			throw th;
+		} catch (Throwable e) {
+			if (null == factory) {
+
+			}
+			logger.error("getBean(Class<?>:'" + beanId + "')", e);
 		}
 		return salida;
 	}

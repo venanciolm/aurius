@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.w3.org/2001/XMLSchema-instance
+        http://www.w3.org/2001/XMLSchema.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+
+	<!-- <bean id="transactionManager" class="org.jencks.factory.TransactionManagerFactoryBean" 
+		/> -->
+
+	<!-- <bean name="javax.resource.spi.work.WorkManager" id="workManager" -->
+	<!-- class="org.jencks.factory.WorkManagerFactoryBean"> -->
+	<!-- <property name="threadPoolSize" value="25" /> -->
+	<!-- <property name="transactionManager" ref="transactionManager" /> -->
+	<!-- </bean> -->
+
+	<bean id="transactionManager"
+		class="com.farmafene.commons.jee.TransactionManagerFactory" />
+	<bean class="com.farmafene.commons.jee.WorkManagerFactory">
+		<property name="xaWork" ref="transactionManager" />
+	</bean>
+</beans>

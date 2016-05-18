@@ -65,6 +65,7 @@
 		<commons-j2ee-tools.VERSION>1.1.0</commons-j2ee-tools.VERSION>
 		<guava.VERSION>11.0.1</guava.VERSION>
 		<junit.VERSION>4.12</junit.VERSION>
+		<postgresql.VERSION>9.4.1208.jre7</postgresql.VERSION>
 	</properties>
 	<scm>
 		<tag>HEAD</tag>
@@ -281,13 +282,13 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.farmafene.aurius</groupId>
+				<groupId>com.farmafene.aurius.commons</groupId>
 				<artifactId>aurius-ioc</artifactId>
 				<version>${project.version}</version>
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
-				<groupId>com.farmafene.aurius.impl</groupId>
+				<groupId>com.farmafene.aurius.commons.impl</groupId>
 				<artifactId>aurius-ioc-spring</artifactId>
 				<version>${project.version}</version>
 				<scope>compile</scope>
@@ -345,6 +346,11 @@
 				<version>${mysql-connector-java.VERSION}</version>
 				<type>jar</type>
 				<scope>provided</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.postgresql</groupId>
+				<artifactId>postgresql</artifactId>
+				<version>${postgresql.VERSION}</version>
 			</dependency>
 			<dependency>
 				<groupId>commons-dbcp</groupId>

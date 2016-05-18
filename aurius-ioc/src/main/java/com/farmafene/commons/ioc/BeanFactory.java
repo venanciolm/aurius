@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,60 +21,53 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
-
-import com.farmafene.aurius.ioc.impl.SpringBeanFactoryLocator;
+package com.farmafene.commons.ioc;
 
 /**
- * Utilidad para la gesti髇 de Beans del sistema
  * 
- * @author vlopez
- * @since 1.0.0
+ * Implementaci贸n del localizador de una Bean Factory del sistema
+ * 
+ * @see IBeanFactory
+ * @since 1.0
  */
-public class AuriusAplicationBeanFactory {
-	private static final IAuriusBeanFactory beanFactory = create();
+public abstract class BeanFactory {
 
-	/**
-	 * Instancia la factoria
-	 * 
-	 * @return la factoria activa
-	 * @since 1.0.0
-	 */
-	private static IAuriusBeanFactory create() {
+	private static final BeanFactoryLocatorImpl iBeanFactoryLocator = new BeanFactoryLocatorImpl();
 
-		IAuriusBeanFactory conf = null;
-		try {
-			conf = new SpringBeanFactoryLocator();
-		} catch (Exception e) {
-			conf = new AuriusBeanFactorySustitute();
-		}
-		return conf;
+	private BeanFactory() {
+		// do nothing
 	}
 
 	/**
-	 * Constructor privado
+	 * M茅todo localizador de la {@link BeanFactory}
 	 * 
-	 * @since 1.0.0
+	 * @return la {@link IBeanFactory} activa en el sistema
 	 */
-	private AuriusAplicationBeanFactory() {
+	public static final IBeanFactory getIBeanFactory() {
+		return iBeanFactoryLocator.getIBeanFactory();
+	}
 
+	public static final IBeanFactoryManager getIBeanFactoryManager() {
+		return iBeanFactoryLocator;
 	}
 
 	/**
-	 * Obtiene una instancia del Mediador de transacciones activas.
+	 * Acceso al m茅todo de localizaci贸n de clases
 	 * 
-	 * @return Instancia del Mediador de Transacciones activas.
-	 * @since 1.0.0
+	 * @param clazz
+	 *            Interfaz de la implementaci贸n que se intenta localizar
+	 * @return Implementaci贸n activa
+	 * @see IBeanFactory#getBean(Class)
 	 */
-	public static IAuriusBeanFactory getIAuriusBeanFactory() {
-		return beanFactory;
+	public static <O> O getBean(Class<O> clazz) {
+		return getIBeanFactory().getBean(clazz);
 	}
 
-	public static <M extends Object> M getBean(Class<M> clazz) {
-		return getIAuriusBeanFactory().getBean(clazz);
+	public static <O> O getBean(Class<O> clazz, String beanId) {
+		return getIBeanFactory().getBean(clazz, beanId);
 	}
 
-	public static Object getBean(String id) {
-		return getIAuriusBeanFactory().getBean(id);
+	public static <O> O getBean(String beanId) {
+		return getIBeanFactory().getBean(beanId);
 	}
 }

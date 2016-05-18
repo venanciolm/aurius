@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,60 +21,27 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
+package com.farmafene.commons.ioc.impl;
 
-import com.farmafene.aurius.ioc.impl.AuriusBeanFactoryImpl;
+import com.farmafene.commons.ioc.IBeanFactoryParams;
 
-/**
- * Utilidad para la gestión de Beans del sistema
- * 
- * @author vlopez
- * @since 1.0.0
- */
-public class AuriusBeanFactory {
-	private static final IAuriusBeanFactory beanFactory = create();
+public class BeanFactoryParamsTest2 implements IBeanFactoryParams {
 
-	/**
-	 * Instancia la factoria
-	 * 
-	 * @return la factoria activa
-	 * @since 1.0.0
-	 */
-	private static IAuriusBeanFactory create() {
-
-		IAuriusBeanFactory conf = null;
-		try {
-			conf = new AuriusBeanFactoryImpl();
-		} catch (Exception e) {
-			conf = new AuriusBeanFactorySustitute();
-		}
-		return conf;
-	}
-
-	/**
-	 * Constructor privado
-	 * 
-	 * @since 1.0.0
-	 */
-	private AuriusBeanFactory() {
+	public BeanFactoryParamsTest2() {
 
 	}
 
 	/**
-	 * Obtiene una instancia del Mediador de transacciones activas.
+	 * {@inheritDoc}
 	 * 
-	 * @return Instancia del Mediador de Transacciones activas.
-	 * @since 1.0.0
+	 * @see java.lang.Object#toString()
 	 */
-	public static IAuriusBeanFactory getIAuriusBeanFactory() {
-		return beanFactory;
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName()).append("={");
+		sb.append("}");
+		return sb.toString();
 	}
 
-	public static <M extends Object> M getBean(Class<M> clazz) {
-		return getIAuriusBeanFactory().getBean(clazz);
-	}
-
-	public static Object getBean(String id) {
-		return getIAuriusBeanFactory().getBean(id);
-	}
 }

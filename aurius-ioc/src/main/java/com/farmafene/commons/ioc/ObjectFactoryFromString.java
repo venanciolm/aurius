@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2011 farmafene.com
+ * Copyright (c) 2009-2014 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,7 +21,7 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.ioc;
+package com.farmafene.commons.ioc;
 
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;
@@ -33,19 +33,11 @@ import javax.naming.Name;
 import javax.naming.Reference;
 import javax.naming.spi.ObjectFactory;
 
-/**
- * ObjectFactory para la publicación en JNDI de objetos de configuración
- * 
- * @author vlopez
- * @since 1.0.0
- * @version 1.0.0
- */
-public class StringObjectFactory implements ObjectFactory {
-
+public class ObjectFactoryFromString implements ObjectFactory {
 	private static final Logger logger = Logger
-			.getLogger(StringObjectFactory.class.getName());
+			.getLogger(ObjectFactoryFromBeanFactory.class.getName());
 
-	public StringObjectFactory() {
+	public ObjectFactoryFromString() {
 		if (logger.isLoggable(Level.FINEST)) {
 			logger.finest(this + "<init>");
 		}
@@ -54,17 +46,19 @@ public class StringObjectFactory implements ObjectFactory {
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @since 1.0.0
+	 * @see javax.naming.spi.ObjectFactory#getObjectInstance(java.lang.Object,
+	 *      javax.naming.Name, javax.naming.Context, java.util.Hashtable)
 	 */
-	public Object getObjectInstance(Object reference, Name binding,
-			Context ctx, Hashtable<?, ?> enviroment) throws Exception {
+	@Override
+	public Object getObjectInstance(Object reference, Name name,
+			Context nameCtx, Hashtable<?, ?> environment) throws Exception {
 		Throwable th = null;
 		try {
 			Reference ref = (Reference) reference;
 			String value = (String) ref.get("value").getContent();
 
 			if (logger.isLoggable(Level.FINEST)) {
-				logger.finest("'" + binding + "'->'" + ref.getClassName()
+				logger.finest("'" + nameCtx + "'->'" + ref.getClassName()
 						+ "' (" + value + ")");
 			}
 			Class<?> clazz = createClass(ref.getClassName());
@@ -79,11 +73,6 @@ public class StringObjectFactory implements ObjectFactory {
 		throw new RuntimeException(th);
 	}
 
-	/**
-	 * @param className
-	 * @return
-	 * @since 1.0.0
-	 */
 	private Class<?> createClass(String className) {
 		Class<?> clazz = null;
 		ClassLoader tcl = Thread.currentThread().getContextClassLoader();
