@@ -28,8 +28,9 @@ import java.io.File;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.support.FileSystemXmlApplicationContext;
 
-import com.farmafene.aurius.ioc.IAuriusBeanFactory;
 import com.farmafene.aurius.server.Configuracion;
+import com.farmafene.commons.ioc.IBeanFactory;
+import com.farmafene.commons.ioc.impl.ISpringConfigurableApplicationContext;
 
 public class SpringFromConfiguration implements
 		ISpringConfigurableApplicationContext {
@@ -41,7 +42,7 @@ public class SpringFromConfiguration implements
 	 */
 	@Override
 	public ConfigurableApplicationContext getSpringConfigurableApplicationContext() {
-		String file = Configuracion.getProperty(IAuriusBeanFactory.class
+		String file = Configuracion.getProperty(IBeanFactory.class
 				.getCanonicalName() + "_file");
 		if (file == null) {
 			file = "AuriusSpringConfiguration-beans.xml";

@@ -21,5 +21,9 @@
 			<artifactId>aurius-mngt-base</artifactId>
 			<scope>provided</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.xbean</groupId>
+			<artifactId>xbean-classloader</artifactId>
+		</dependency>
 	</dependencies>
 </project>

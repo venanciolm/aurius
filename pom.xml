@@ -72,9 +72,11 @@
 		<guava.VERSION>11.0.1</guava.VERSION>
 		<junit.VERSION>4.12</junit.VERSION>
 		<postgresql.VERSION>9.4.1208.jre7</postgresql.VERSION>
-		<cas.VERSION>3.4.12</cas.VERSION>
+		<jcifs.VERSION>1.2.19</jcifs.VERSION>
+		<cas.VERSION>3.5.2.1</cas.VERSION>
 		<httpclient.VERSION>4.1</httpclient.VERSION>
-		<opensaml.VERSION>1.1b</opensaml.VERSION>
+		<xbean-classloader.VERSION>3.9</xbean-classloader.VERSION>
+		<xbean-spring.VERSION>3.7</xbean-spring.VERSION>
 	</properties>
 	<scm>
 		<tag>HEAD</tag>
@@ -416,19 +418,66 @@
 				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.httpcomponents</groupId>
-				<artifactId>httpclient</artifactId>
-				<version>${httpclient.VERSION}</version>
+				<groupId>org.jasig.cas</groupId>
+				<artifactId>cas-server-support-spnego</artifactId>
+				<version>${cas.VERSION}</version>
+				<scope>provided</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.webflow</groupId>
+						<artifactId>spring-webflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.samba.jcifs</groupId>
+						<artifactId>jcifs-ext</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml</groupId>
+						<artifactId>xmldsig</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.jasig.cas</groupId>
 				<artifactId>cas-server-core</artifactId>
 				<version>${cas.VERSION}</version>
+				<scope>provided</scope>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.webflow</groupId>
+						<artifactId>spring-webflow</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>log4j</groupId>
+						<artifactId>log4j</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>javax.xml</groupId>
+						<artifactId>xmldsig</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
-				<groupId>opensaml</groupId>
-				<artifactId>opensaml</artifactId>
-				<version>${opensaml.VERSION}</version>
+				<groupId>org.samba.jcifs</groupId>
+				<artifactId>jcifs</artifactId>
+				<version>${jcifs.VERSION}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${httpclient.VERSION}</version>
+				<scope>compile</scope>
+				<type>jar</type>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>javassist</groupId>
@@ -443,6 +492,24 @@
 				<version>${hibernate-cglib-repack.VERSION}</version>
 				<scope>compile</scope>
 				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-classloader</artifactId>
+				<version>${xbean-classloader.VERSION}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.xbean</groupId>
+				<artifactId>xbean-spring</artifactId>
+				<version>${xbean-spring.VERSION}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>commons-logging</groupId>
+						<artifactId>commons-logging</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.geronimo.specs</groupId>

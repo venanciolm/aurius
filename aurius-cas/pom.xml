@@ -25,12 +25,12 @@
 			<artifactId>httpclient</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.jasig.cas</groupId>
-			<artifactId>cas-server-core</artifactId>
+			<groupId>org.samba.jcifs</groupId>
+			<artifactId>jcifs</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>opensaml</groupId>
-			<artifactId>opensaml</artifactId>
+			<groupId>org.jasig.cas</groupId>
+			<artifactId>cas-server-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>ch.qos.logback</groupId>
@@ -38,4 +38,18 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	<repositories>
+		<repository>
+			<id>ja-sig</id>
+			<url>http://oss.sonatype.org/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>jboss_thr</id>
+			<url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/</url>
+		</repository>
+		<repository>
+			<id>dev.mapfish.org</id>
+			<url>http://dev.mapfish.org/maven/repository/</url>
+		</repository>
+	</repositories>
 </project>

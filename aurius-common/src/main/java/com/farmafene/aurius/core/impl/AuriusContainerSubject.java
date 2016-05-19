@@ -23,77 +23,29 @@
  */
 package com.farmafene.aurius.core.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.farmafene.aurius.core.IAuriusContainerObserver;
 import com.farmafene.aurius.core.IAuriusContainerSubject;
 
 public class AuriusContainerSubject implements IAuriusContainerSubject {
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#add(com.farmafene.aurius
-	 *      .core.IAuriusContainerObserver)
-	 */
-	@Override
-	public void add(IAuriusContainerObserver obj) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
-	}
+	private static final Logger logger = LoggerFactory
+			.getLogger(AuriusContainerSubject.class);
 
-	@Override
-	public boolean remove(IAuriusContainerObserver obj) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
-	}
+	private List<IAuriusContainerObserver> listeners;
+	private List<IAuriusContainerObserver> initials;
+	private boolean started = false;
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#start()
-	 */
-	@Override
-	public void start() {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#startCluster()
-	 */
-	@Override
-	public void startCluster() {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#stop()
-	 */
-	@Override
-	public void stop() {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#stopCluster()
-	 */
-	@Override
-	public void stopCluster() {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
+	public AuriusContainerSubject() {
+		this.listeners = new CopyOnWriteArrayList<IAuriusContainerObserver>();
+		this.initials = new CopyOnWriteArrayList<IAuriusContainerObserver>();
+		logger.debug(this + "<init>");
 	}
 
 	/**
@@ -103,8 +55,145 @@ public class AuriusContainerSubject implements IAuriusContainerSubject {
 	 */
 	@Override
 	public void addInitial(IAuriusContainerObserver onStart) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IAuriusContainerSubject.class.getName());
+		initials.add(onStart);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#add(com.farmafene.aurius.core.IAuriusContainerObserver)
+	 */
+	@Override
+	public void add(IAuriusContainerObserver obj) {
+		listeners.add(obj);
+		if (logger.isDebugEnabled()) {
+			logger.debug(this.toString());
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#remove(com.farmafene
+	 *      .aurius.core.IAuriusContainerObserver)
+	 */
+	@Override
+	public boolean remove(IAuriusContainerObserver obj) {
+		boolean salida = listeners.remove(obj);
+		if (logger.isDebugEnabled()) {
+			logger.debug(this.toString());
+		}
+		return salida;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#start()
+	 */
+	@Override
+	public void start() {
+		if (!started) {
+			started = true;
+			for (IAuriusContainerObserver o : initials) {
+				logger.debug("start('" + o + "')");
+				try {
+					o.start();
+				} catch (Throwable th) {
+					logger.error("Error al arrancar: " + o
+							+ ", se ha producido una excepción:", th);
+				}
+			}
+		}
+		for (IAuriusContainerObserver o : listeners) {
+			logger.debug("start('" + o + "')");
+			try {
+				o.start();
+			} catch (Throwable th) {
+				logger.error("Error al arrancar: " + o
+						+ ", se ha producido una excepción:", th);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#startCluster()
+	 */
+	@Override
+	public void startCluster() {
+		for (IAuriusContainerObserver o : listeners) {
+			try {
+				o.startCluster();
+			} catch (Throwable th) {
+				logger.error("Error al arrancar el cluster: " + o
+						+ ", se ha producido una excepción:", th);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#stop()
+	 */
+	@Override
+	public void stop() {
+		List<IAuriusContainerObserver> listeners = new ArrayList<IAuriusContainerObserver>(
+				this.listeners);
+		for (int i = listeners.size() - 1; i >= 0; i--) {
+			IAuriusContainerObserver o = listeners.get(i);
+			try {
+				if (logger.isInfoEnabled()) {
+					logger.info("closing " + o);
+				}
+				o.stop();
+				if (logger.isInfoEnabled()) {
+					logger.info("closed " + o);
+				}
+			} catch (Throwable th) {
+				logger.error("Error al parar: " + o
+						+ ", se ha producido una excepción:", th);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * 
+	 * @see com.farmafene.aurius.core.IAuriusContainerSubject#stopCluster()
+	 */
+	@Override
+	public void stopCluster() {
+		List<IAuriusContainerObserver> listeners = new ArrayList<IAuriusContainerObserver>(
+				this.listeners);
+		for (int i = listeners.size() - 1; i >= 0; i--) {
+			IAuriusContainerObserver o = listeners.get(i);
+			try {
+				o.stopCluster();
+			} catch (Throwable th) {
+				logger.error("Error al parar el cluster: " + o
+						+ ", se ha producido una excepción:", th);
+			}
+		}
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName()).append("={");
+		sb.append("with ").append(listeners.size()).append(" observers");
+		sb.append("}");
+		return sb.toString();
 	}
 }
