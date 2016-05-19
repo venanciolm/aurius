@@ -19,6 +19,9 @@
 		<module>aurius-ioc-spring</module>
 		<module>aurius-hibernate</module>
 		<module>aurius-cas</module>
+		<module>aurius-imp-ioc</module>
+		<module>aurius-impl</module>
+		<module>aurius-ddl</module>
 	</modules>
 	<properties>
 		<!-- -->
@@ -50,6 +53,7 @@
 		<maven-compliler-plugin>2.3.2</maven-compliler-plugin>
 		<maven-dependency-plugin>2.10</maven-dependency-plugin>
 		<maven-source-plugin>2.4</maven-source-plugin>
+		<maven.assembly.plugin.version>2.6</maven.assembly.plugin.version>
 		<wagon-webdav-jackrabbit>2.9</wagon-webdav-jackrabbit>
 		<jdk.version>1.7</jdk.version>
 		<maven-scm-plugin>1.9.4</maven-scm-plugin>
@@ -158,6 +162,26 @@
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>${maven-dependency-plugin}</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>${maven.assembly.plugin.version}</version>
+					<configuration>
+						<descriptors>
+							<descriptor>src/main/assembly/bin.xml</descriptor>
+						</descriptors>
+						<finalName>${project.artifactId}-${project.version}</finalName>
+						<appendAssemblyId>false</appendAssemblyId>
+					</configuration>
+					<executions>
+						<execution>
+							<phase>package</phase>
+							<goals>
+								<goal>single</goal>
+							</goals>
+						</execution>
+					</executions>
 				</plugin>
 				<!--This plugin's configuration is used to store Eclipse m2e settings 
 					only. It has no influence on the Maven build itself. -->
