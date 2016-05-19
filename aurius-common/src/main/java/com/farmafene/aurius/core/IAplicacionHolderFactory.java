@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2014 farmafene.com
+ * Copyright (c) 2009-2012 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,33 +21,25 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.core.impl;
+package com.farmafene.aurius.core;
 
-import java.io.File;
+import java.util.Collection;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+/**
+ * Interfaz factoría de aplicaciones
+ * 
+ * @author vlopez
+ * @since 1.0.0
+ */
+public interface IAplicacionHolderFactory {
 
-import com.farmafene.aurius.server.Configuracion;
-import com.farmafene.commons.ioc.IBeanFactory;
-import com.farmafene.commons.ioc.impl.ISpringConfigurableApplicationContext;
+	public IAplicacionHolder getHolder(Servicio s)
+			throws IllegalArgumentException, UnsupportedOperationException,
+			IllegalStateException;
 
-public class SpringFromConfiguration implements
-		ISpringConfigurableApplicationContext {
+	public void dispose();
 
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.commons.ioc.impl.ISpringConfigurableApplicationContext#getSpringConfigurableApplicationContext()
-	 */
-	@Override
-	public ConfigurableApplicationContext getSpringConfigurableApplicationContext() {
-		String file = Configuracion.getProperty(IBeanFactory.class
-				.getCanonicalName() + "_file");
-		if (file == null) {
-			file = "AuriusSpringConfiguration-beans.xml";
-		}
-		return new FileSystemXmlApplicationContext(new File(new File(
-				Configuracion.getConfigPath()), file).getPath());
-	}
+	public Collection<IAplicacionHolder> getAplicacionHolders();
+
+	public void close(IAplicacionHolder holder);
 }

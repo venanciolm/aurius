@@ -21,33 +21,58 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.aurius.core.impl;
+/**
+ * 
+ */
+package com.farmafene.aurius.uuidFactory;
 
-import java.io.File;
+import java.util.UUID;
 
-import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import com.farmafene.aurius.core.IUUIDFactory;
 
-import com.farmafene.aurius.server.Configuracion;
-import com.farmafene.commons.ioc.IBeanFactory;
-import com.farmafene.commons.ioc.impl.ISpringConfigurableApplicationContext;
-
-public class SpringFromConfiguration implements
-		ISpringConfigurableApplicationContext {
+/**
+ * @author vlopez
+ * 
+ */
+public class UUIDFactoryFarmafene implements IUUIDFactory {
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.commons.ioc.impl.ISpringConfigurableApplicationContext#getSpringConfigurableApplicationContext()
+	 * @see com.farmafene.aurius.core.IUUIDFactory#getNewUUID()
 	 */
 	@Override
-	public ConfigurableApplicationContext getSpringConfigurableApplicationContext() {
-		String file = Configuracion.getProperty(IBeanFactory.class
-				.getCanonicalName() + "_file");
-		if (file == null) {
-			file = "AuriusSpringConfiguration-beans.xml";
-		}
-		return new FileSystemXmlApplicationContext(new File(new File(
-				Configuracion.getConfigPath()), file).getPath());
+	public UUID getNewUUID() {
+		return UUID.randomUUID();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.IConfigurableBean#getImplementationVentor()
+	 */
+	@Override
+	public String getImplementationVentor() {
+		return "Farmafene";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.IConfigurableBean#getImplementationVersion()
+	 */
+	@Override
+	public String getImplementationVersion() {
+		return "1.0";
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.IConfigurableBean#getImplementationDescription()
+	 */
+	@Override
+	public String getImplementationDescription() {
+		return "Generación aleatoria de UUIDs";
 	}
 }

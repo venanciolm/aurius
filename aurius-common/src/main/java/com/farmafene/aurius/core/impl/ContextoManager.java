@@ -25,94 +25,114 @@ package com.farmafene.aurius.core.impl;
 
 import com.farmafene.aurius.core.ContextoCore;
 import com.farmafene.aurius.core.IContextoManager;
+import com.farmafene.aurius.core.UUIDFactory;
+import com.farmafene.aurius.server.Contexto;
+import com.farmafene.aurius.server.IContextoLocator;
 
+/**
+ * Implementa la factor�a de localización y gestión de contextos
+ * 
+ * @author vlopez
+ * @version 1.0.0
+ * @since 1.0.0
+ */
 public class ContextoManager implements IContextoManager {
 
+	private ThreadLocal<ContextoCore> holder;
+
 	/**
-	 * Constructor por defecto
+	 * Constructor
+	 * 
+	 * @since 1.0.0
 	 */
 	public ContextoManager() {
-
+		holder = new ThreadLocal<ContextoCore>();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#createContext()
-	 */
-	@Override
-	public ContextoCore createContext() {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#getContexto()
+	 * @see IContextoLocator#getContexto()
+	 * @since 1.0.0
 	 */
 	@Override
 	public ContextoCore getContexto() {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+		return holder.get();
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#setContexto(com.farmafene.aurius.core.ContextoCore)
+	 * @see IContextoManager#setContexto(Contexto)
+	 * @since 1.0.0
+	 */
+	public void setContexto(ContextoCore contexto) {
+		holder.set(contexto);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see IContextoManager#createContext()
+	 * @since 1.0.0
 	 */
 	@Override
-	public void setContexto(ContextoCore ctx) {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+	public ContextoCore createContext() {
+		ContextoImpl ctx = new ContextoImpl();
+		ctx.setId(UUIDFactory.getNewUUID());
+		ctx.setInitTime(System.currentTimeMillis());
+		return ctx;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#setIdServicio(com.farmafene.aurius.core.ContextoCore,
-	 *      java.lang.String)
+	 * @since 1.0.0
 	 */
 	@Override
 	public void setIdServicio(ContextoCore ctx, String id) {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+		if (ctx == null) {
+			throw new IllegalArgumentException("El contexto no puede ser null.");
+		}
+		((ContextoImpl) ctx).setIdServicio(id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#setIdServicioActual(com.farmafene.aurius.core.ContextoCore,
-	 *      java.lang.String)
+	 * @since 1.0.0
 	 */
 	@Override
-	public void setIdServicioActual(ContextoCore ctx, String version) {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+	public void setIdServicioActual(ContextoCore ctx, String id) {
+		if (ctx == null) {
+			throw new IllegalArgumentException("El contexto no puede ser null.");
+		}
+		((ContextoImpl) ctx).setIdServicioActual(id);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#setVersionServicio(com.farmafene.aurius.core.ContextoCore,
-	 *      java.lang.String)
+	 * @since 1.0.0
 	 */
 	@Override
 	public void setVersionServicio(ContextoCore ctx, String version) {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+		if (ctx == null) {
+			throw new IllegalArgumentException("El contexto no puede ser null.");
+		}
+		((ContextoImpl) ctx).setVersionServicio(version);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.core.IContextoManager#setVersionServicioActual(com.farmafene.aurius.core.ContextoCore,
-	 *      java.lang.String)
+	 * @since 1.0.0
 	 */
 	@Override
 	public void setVersionServicioActual(ContextoCore ctx, String version) {
-		throw new UnsupportedOperationException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada");
+		if (ctx == null) {
+			throw new IllegalArgumentException("El contexto no puede ser null.");
+		}
+		((ContextoImpl) ctx).setVersionServicioActual(version);
 	}
 }

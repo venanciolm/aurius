@@ -26,71 +26,132 @@
  */
 package com.farmafene.aurius.mngt.impl;
 
+import java.lang.management.ManagementFactory;
+import java.lang.management.ThreadMXBean;
 import com.farmafene.aurius.mngt.IThreadManagement;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * @author vlopez
- * 
- */
 public class ThreadManagement implements IThreadManagement {
 
+	private static final Logger logger = LoggerFactory
+			.getLogger(ThreadManagement.class);
+	private ThreadMXBean threadMXBean;
+	public boolean cpuEnabled = false;
+	public boolean contentionEnabled = false;
+
 	/**
-	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.mngt.IThreadManagement#getBlockedTime()
 	 */
-	@Override
-	public long getBlockedTime(long threadId) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IThreadManagement.class.getName());
+	public ThreadManagement() {
+		init();
+		logger.info(this.toString());
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.mngt.IThreadManagement#getContentionTime()
+	 * @see java.lang.Object#toString()
 	 */
 	@Override
-	public long getContentionTime(long threadId) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IThreadManagement.class.getName());
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append("={");
+		sb.append("cpuEnabled=").append(cpuEnabled);
+		sb.append(", contentionEnabled=").append(contentionEnabled);
+		sb.append("}");
+		return sb.toString();
+	}
+
+	public void init() {
+		this.threadMXBean = ManagementFactory.getThreadMXBean();
+		if (!threadMXBean.isThreadCpuTimeSupported()) {
+			cpuEnabled = false;
+			logger
+					.error("ThreadMXBean.ThreadCpuTimeSupported is not supported.");
+		} else if (!threadMXBean.isThreadCpuTimeEnabled()) {
+			threadMXBean.setThreadCpuTimeEnabled(true);
+			cpuEnabled = true;
+		} else {
+			cpuEnabled = true;
+		}
+		if (!threadMXBean.isThreadContentionMonitoringSupported()) {
+			contentionEnabled = false;
+			logger
+					.error("ThreadMXBean.ThreadContentionMonitoringSupported is not supported.");
+		} else if (!threadMXBean.isThreadContentionMonitoringEnabled()) {
+			threadMXBean.setThreadContentionMonitoringEnabled(true);
+			contentionEnabled = true;
+		} else {
+			contentionEnabled = true;
+		}
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.mngt.IThreadManagement#getCpuTime()
+	 * @see com.farmafene.aurius.mngt.resources.IThreadManagement#getCpuTime(long)
 	 */
-	@Override
 	public long getCpuTime(long threadId) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IThreadManagement.class.getName());
+		long time = 0;
+		if (cpuEnabled && threadId > 0) {
+			time = threadMXBean.getThreadCpuTime(threadId);
+		}
+		return time;
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.mngt.IThreadManagement#getCurrentThreadStackTrace()
+	 * @see com.farmafene.aurius.mngt.resources.IThreadManagement
+	 *      getContentionTime(long)
 	 */
-	@Override
-	public StackTraceElement[] getStackTrace(long threadId) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IThreadManagement.class.getName());
+	public long getContentionTime(long threadId) {
+		return getBlockedTime(threadId) + getWaitedTime(threadId);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.mngt.IThreadManagement#getWaitedTime()
+	 * @see com.farmafene.aurius.mngt.resources.IThreadManagement#
+	 *      getBlockedTime(long)
 	 */
-	@Override
+	public long getBlockedTime(long threadId) {
+		long time = 0;
+		if (contentionEnabled && threadId > 0) {
+			time = threadMXBean.getThreadInfo(threadId).getBlockedTime();
+		}
+		return time;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.mngt.resources.IThreadManagement#
+	 *      getWaitedTime(long)
+	 */
 	public long getWaitedTime(long threadId) {
-		throw new IllegalStateException(
-				"Error en el empaquetado. Esta clase nunca debe ser invocada: "
-						+ IThreadManagement.class.getName());
+		long time = 0;
+		if (contentionEnabled && threadId > 0) {
+			time = threadMXBean.getThreadInfo(threadId).getWaitedTime();
+		}
+		return time;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.mngt.resources.IThreadManagement#
+	 *      getStackTrace(long)
+	 */
+	public StackTraceElement[] getStackTrace(long threadId) {
+
+		StackTraceElement[] st = threadMXBean.getThreadInfo(threadId)
+				.getStackTrace();
+		if (null == st) {
+			st = new StackTraceElement[0];
+		}
+		return st;
 	}
 }
