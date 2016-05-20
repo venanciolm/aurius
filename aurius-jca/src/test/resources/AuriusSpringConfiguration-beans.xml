@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.w3.org/2001/XMLSchema-instance
+        http://www.w3.org/2001/XMLSchema.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="btmConfig" factory-method="getConfiguration"
+		class="bitronix.tm.TransactionManagerServices">
+		<property name="serverId" value="aurius-btm" />
+		<property name="logPart1Filename" value="./btm/aurius-btm-1.tlog" />
+		<property name="logPart2Filename" value="./btm/aurius-btm-2.tlog" />
+		<property name="defaultTransactionTimeout" value="300" />
+	</bean>
+
+	<bean id="BitronixTransactionManager" factory-method="getTransactionManager"
+		class="bitronix.tm.TransactionManagerServices" depends-on="btmConfig"
+		destroy-method="shutdown" />
+
+	<bean id="AuriusCF"
+		class="com.farmafene.aurius.jca.connector.TxManagedConnectionFactory">
+		<property name="broker" value="tcp://localhost:61616" />
+		<property name="queue" value="AURIUS.JCA" />
+		<property name="internalRegistro" value="true" />
+	</bean>
+	<bean id="BTMwrapper" class="com.farmafene.aurius.jca.btm.BTMWrapper"
+		init-method="init" destroy-method="close" depends-on="BitronixTransactionManager">
+		<property name="uniqueName" value="aurius" />
+		<property name="managedConnectionFactory" ref="AuriusCF" />
+		<property name="minPoolSize" value="2" />
+		<property name="maxPoolSize" value="4" />
+		<property name="acquisitionTimeout" value="30000" />
+		<property name="allowLocalTransactions" value="true" />
+	</bean>
+
+	<bean name="com.farmafene.aurius.jca.AuriusConnectionFactory"
+		factory-method="getConnectionFactory" factory-bean="BTMwrapper" />
+</beans>

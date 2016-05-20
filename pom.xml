@@ -24,6 +24,7 @@
 		<module>aurius-ddl</module>
 		<module>aurius-config</module>
 		<module>aurius-dao</module>
+		<module>aurius-jca</module>
 	</modules>
 	<properties>
 		<!-- -->
@@ -69,8 +70,10 @@
 		<javassist.VERSION>3.4.GA</javassist.VERSION>
 		<hibernate-cglib-repack.VERSION>2.1_3</hibernate-cglib-repack.VERSION>
 		<geronimo-jta_1.1_spec.VERSION>1.1.1</geronimo-jta_1.1_spec.VERSION>
+		<geronimo-jms_1.1_spec.VERSION>1.1.1</geronimo-jms_1.1_spec.VERSION>
 		<mysql-connector-java.VERSION>5.1.27</mysql-connector-java.VERSION>
 		<commons-dbcp.VERSION>1.4</commons-dbcp.VERSION>
+		<commons-codec.VERSION>1.4</commons-codec.VERSION>
 		<derbyclient.VERSION>10.6.1.0</derbyclient.VERSION>
 		<servlet-api.VERSION>2.5</servlet-api.VERSION>
 		<xstream.VERSION>1.4.7</xstream.VERSION>
@@ -81,6 +84,7 @@
 		<jcifs.VERSION>1.2.19</jcifs.VERSION>
 		<cas.VERSION>3.5.2.1</cas.VERSION>
 		<httpclient.VERSION>4.1</httpclient.VERSION>
+		<org.apache.activemq.VERSION>5.7.0</org.apache.activemq.VERSION>
 		<xbean-classloader.VERSION>3.9</xbean-classloader.VERSION>
 		<xbean-spring.VERSION>3.7</xbean-spring.VERSION>
 	</properties>
@@ -298,6 +302,13 @@
 			</dependency>
 			<dependency>
 				<groupId>com.farmafene.aurius.impl</groupId>
+				<artifactId>aurius-impl-core</artifactId>
+				<version>${project.version}</version>
+				<type>jar</type>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.farmafene.aurius.impl</groupId>
 				<artifactId>aurius-core</artifactId>
 				<version>${project.version}</version>
 				<type>ejb</type>
@@ -372,6 +383,11 @@
 						<artifactId>commons-logging</artifactId>
 					</exclusion>
 				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>commons-codec</groupId>
+				<artifactId>commons-codec</artifactId>
+				<version>${commons-codec.VERSION}</version>
 			</dependency>
 			<dependency>
 				<groupId>com.thoughtworks.xstream</groupId>
@@ -538,6 +554,20 @@
 				<groupId>org.apache.geronimo.specs</groupId>
 				<artifactId>geronimo-jta_1.1_spec</artifactId>
 				<version>${geronimo-jta_1.1_spec.VERSION}</version>
+				<scope>provided</scope>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.activemq</groupId>
+				<artifactId>activemq-core</artifactId>
+				<version>${org.apache.activemq.VERSION}</version>
+				<scope>provided</scope>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.geronimo.specs</groupId>
+				<artifactId>geronimo-jms_1.1_spec</artifactId>
+				<version>${geronimo-jms_1.1_spec.VERSION}</version>
 				<scope>provided</scope>
 				<type>jar</type>
 			</dependency>
