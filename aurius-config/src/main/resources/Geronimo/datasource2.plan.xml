@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+cd GERONIMO_HOME
+java -jar bin/deployer.jar deploy plan-file.xml \
+        \repository\org\tranql\tranql-connector-ra\1.7\tranql-connector-ra-1.7.rar
+
+-->
+<connector xmlns="http://geronimo.apache.org/xml/ns/j2ee/connector-1.2">
+    <dep:environment xmlns:dep="http://geronimo.apache.org/xml/ns/deployment-1.2">
+        <dep:moduleId>
+            <dep:groupId>com.farmafene.spd</dep:groupId>
+            <dep:artifactId>spd-db</dep:artifactId>
+            <dep:version>1.0</dep:version>
+            <dep:type>car</dep:type>
+        </dep:moduleId>
+        <dep:dependencies>
+			<dep:dependency>
+				<dep:groupId>com.farmafene.aurius</dep:groupId>
+				<dep:artifactId>aurius-mngt-base</dep:artifactId>
+				<dep:type>jar</dep:type>
+			</dep:dependency>
+        </dep:dependencies>
+    </dep:environment>
+    <resourceadapter>
+        <outbound-resourceadapter>
+            <connection-definition>
+                <connectionfactory-interface>javax.sql.DataSource</connectionfactory-interface>
+                <connectiondefinition-instance>
+                    <name>farmafene.com/spd/jdbc</name>
+                    <config-property-setting name="Driver">com.farmafene.aurius.mngt.jdbc.AuriusOdbcDriver</config-property-setting>
+                    <config-property-setting name="Password"></config-property-setting>
+                    <config-property-setting name="UserName"></config-property-setting>
+                    <config-property-setting name="ConnectionURL">jdbc:aurius:odbc:Driver={Microsoft Access Driver (*.mdb)};DBQ=C:\Farmaciadefene.es\spd\databases\SPD_DB.MDB;DriverID=22}</config-property-setting>
+                    <connectionmanager>
+                        <local-transaction/>
+                        <single-pool>
+                            <max-size>10</max-size>
+                            <min-size>1</min-size>
+                            <match-one/>
+                        </single-pool>
+                    </connectionmanager>
+                </connectiondefinition-instance>
+            </connection-definition>
+        </outbound-resourceadapter>
+    </resourceadapter>
+</connector>

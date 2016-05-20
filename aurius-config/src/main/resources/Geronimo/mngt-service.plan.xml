@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://geronimo.apache.org/xml/ns/deployment-1.1">
+	<environment>
+		<moduleId>
+			<groupId>com.farmafene.aurius</groupId>
+			<artifactId>mngt-service</artifactId>
+			<version>1.0</version>
+			<type>car</type>
+		</moduleId>
+		<dependencies>
+			<dependency>
+				<groupId>com.farmafene.aurius</groupId>
+                <artifactId>aurius-mngt-base</artifactId>
+				<type>jar</type>
+			</dependency>
+		</dependencies>
+	</environment>
+</module>

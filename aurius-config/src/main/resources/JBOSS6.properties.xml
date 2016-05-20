@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Propiedades Aurius-JBOSS</comment>
+	<entry key="com.farmafene.aurius.ioc.IAuriusBeanFactory_file">AuriusSpringConfiguration-beans.jboss6.xml</entry>
+	<entry key="DB.AURIUS_hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</entry>
+	<entry key="hibernate.transaction.manager_lookup_class">org.hibernate.transaction.JBossTransactionManagerLookup</entry>
+	<entry key="DB.AURIUS_hibernate.connection.datasource">java:/farmafene.com/aurius/jdbc/XA/common</entry>
+</properties>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Propiedades Aurius-TOMCAT</comment>
+	<entry key="com.farmafene.aurius.ioc.IAuriusBeanFactory_file">AuriusSpringConfiguration-beans.tomcat.xml</entry>
+	<entry key="DB.AURIUS_hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</entry>
+<!-- 	<entry key="hibernate.transaction.manager_lookup_class">com.farmafene.aurius.addons.tx.BTMTxLookup</entry> -->
+	<entry key="hibernate.transaction.manager_lookup_class">com.farmafene.aurius.addons.tx.btm.BTMTxLookup</entry>
+	<entry key="hibernate.jndi.class">com.farmafene.aurius.addons.JNDIFactoryOverClassLoader</entry>
+	<entry key="DB.AURIUS_hibernate.connection.datasource">java:comp/env/farmafene.com/aurius/jdbc/XA/common</entry>
+</properties>

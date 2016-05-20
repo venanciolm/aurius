@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+<comment>Propiedades Consola</comment>
+<entry key="log4j.properties">consola.log4j</entry>
+<entry key="log4j.time">1000</entry>
+<!-- --> 
+<entry key="com.farmafene.bitronix-tm">true</entry>
+<!-- -->
+<entry key="hibernate.transactionManagerLookup">com.farmafene.bitronix.hibernate.BTMTransactionManagerLookup</entry>
+<entry key="hibernate.transactionFactory">org.hibernate.transaction.JTATransactionFactory</entry>
+<entry key="hibernate.sessionContext">jta</entry>
+</properties>

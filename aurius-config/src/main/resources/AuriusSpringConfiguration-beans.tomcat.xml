@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.w3.org/2001/XMLSchema-instance
+        http://www.w3.org/2001/XMLSchema.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="broker" class="com.farmafene.aurius.addons.activemq.Broker"
+		depends-on="IAuriusSLF4JFactory">
+		<property name="config" value="broker/activemq.xml" />
+		<property name="start" value="true" />
+	</bean>
+
+	<bean id="propertyPlaceholderConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+		<property name="searchSystemEnvironment" value="true" />
+	</bean>
+
+	<import resource="AuriusSpringConfiguration-beans.xml" />
+
+	<bean id="ITransactionManagerLocator"
+		name="com.farmafene.aurius.addons.tx.ITransactionManagerLocator"
+		class="com.farmafene.aurius.addons.tx.btm.BTMTransactionManagerLocator" />
+
+
+	<bean id="WorkManagerJCA" class="com.farmafene.aurius.addons.wm.WorkManagerImpl"
+		init-method="start" destroy-method="stop">
+		<property name="name" value="AuriusWM" />
+		<property name="iTMAdapter" ref="BTMAdapter" />
+	</bean>
+
+	<bean id="BTMAdapter" class="com.farmafene.aurius.addons.tx.btm.BTMAdapter" />
+
+
+
+	<bean id="IJCAPlataformAdapter" name="com.farmafene.aurius.jca.inbound.IJCAPlataformAdapter"
+		class="com.farmafene.aurius.addons.DevelopPlataformAdapter"
+		depends-on="broker">
+		<property name="workManager" ref="WorkManagerJCA" />
+		<property name="iTMAdapter" ref="BTMAdapter" />
+		<property name="broker" value="vm://AuriusBroker" />
+		<property name="queue" value="QUEUE.${COMPUTERNAME}" />
+		<property name="clusterQueue" value="AURIUS.JCA" />
+	</bean>
+
+	<bean id="DiccionarioHome" class="com.farmafene.aurius.addons.DiccionarioLocalHomeDummy"
+		depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="GestorTxHome" class="com.farmafene.aurius.addons.GestorTxLocalHomeDummy"
+		depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="btmConfig" factory-method="getConfiguration"
+		class="bitronix.tm.TransactionManagerServices" depends-on="IAuriusSLF4JFactory">
+		<property name="serverId" value="aurius-btm-tomcat" />
+		<property name="logPart1Filename" value="./btm/aurius-btm-1.tlog" />
+		<property name="logPart2Filename" value="./btm/aurius-btm-2.tlog" />
+		<property name="defaultTransactionTimeout" value="120" />
+		<!-- <property name="allowLocalTransactions" value="true" /> -->
+	</bean>
+
+	<bean id="BitronixTransactionManager" factory-method="getTransactionManager"
+		class="bitronix.tm.TransactionManagerServices" depends-on="btmConfig"
+		destroy-method="shutdown" />
+
+	<bean id="DiccionarioDS" class="bitronix.tm.resource.jdbc.PoolingDataSource"
+		init-method="init" destroy-method="close" depends-on="BitronixTransactionManager"
+		lazy-init="true">
+		<property name="className"
+			value="com.farmafene.aurius.mngt.jdbc.XADataSourceMySQL" />
+		<property name="uniqueName"
+			value="java:comp/env/farmafene.com/aurius/jdbc/XA/common" />
+		<property name="minPoolSize" value="3" />
+		<property name="maxPoolSize" value="10" />
+		<property name="allowLocalTransactions" value="true" />
+		<property name="driverProperties">
+			<!-- <props> -->
+			<!-- <prop key="URL">jdbc:mysql://papa:3306/aurius_dic</prop> -->
+			<!-- <prop key="User">farmafene</prop> -->
+			<!-- <prop key="Password">farmafene</prop> -->
+			<!-- <prop key="AuriusResourceName">farmafene.com/aurius/jdbc/XA/common</prop> -->
+			<!-- </props> -->
+			<props>
+				<prop key="URL">jdbc:mysql://localhost:3306/dic</prop>
+				<prop key="User">system</prop>
+				<prop key="Password">manager</prop>
+				<prop key="AuriusResourceName">farmafene.com/aurius/jdbc/XA/common</prop>
+			</props>
+		</property>
+	</bean>
+</beans>

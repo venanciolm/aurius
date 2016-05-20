@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<datasources>
+  <xa-datasource>
+    <jndi-name>farmafene.com/aurius/jdbc/XA/common</jndi-name>
+    <use-java-context>true</use-java-context>
+    <track-connection-by-tx/>
+    <xa-datasource-class>com.farmafene.aurius.mngt.jdbc.XADataSourceMySQL</xa-datasource-class>
+    <xa-datasource-property name="URL">jdbc:mysql://localhost/dic</xa-datasource-property>
+    <xa-datasource-property name="User">system</xa-datasource-property>
+    <xa-datasource-property name="Password">manager</xa-datasource-property>
+    <xa-datasource-property name="AuriusResourceName">farmafene.com/aurius/jdbc/XA/common</xa-datasource-property>
+    <metadata>
+       <type-mapping>mySQL</type-mapping>
+    </metadata>
+  </xa-datasource>
+<!--
+D:/es.indra.isl/aaa/lib/aurius-mngt-base-1.0.0-SNAPSHOT.jar
+D:/es.indra.isl/aaa/lib/mysql-connector-java-5.1.20.jar
+-->
+  </datasources>
+
+<!--
+<datasources>
+   <local-tx-datasource>
+     <jndi-name>farmafene.com/aurius/jdbc/XA/common</jndi-name>
+	 <use-java-context>false</use-java-context>
+     <connection-url>jdbc:derby://localhost/AURIUS;create=true</connection-url>
+
+      <driver-class>org.apache.derby.jdbc.ClientDriver</driver-class>
+      <user-name>farmafene</user-name>
+      <password>farmafene</password>
+      <min-pool-size>5</min-pool-size>
+      <max-pool-size>20</max-pool-size>
+      <idle-timeout-minutes>5</idle-timeout-minutes>
+    <metadata>
+       <type-mapping>derby</type-mapping>
+    </metadata>
+   </local-tx-datasource>
+</datasources>
+-->

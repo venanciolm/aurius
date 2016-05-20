@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.w3.org/2001/XMLSchema-instance
+        http://www.w3.org/2001/XMLSchema.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="broker" class="com.farmafene.aurius.addons.activemq.Broker"
+		depends-on="IAuriusSLF4JFactory">
+		<property name="config" value="broker/activemq.xml" />
+		<property name="start" value="true" />
+	</bean>
+
+	<import resource="AuriusSpringConfiguration-beans.xml" />
+	
+	<bean id="UserTransactionLocator" name="com.farmafene.aurius.core.IUserTransactionLocator"
+		class="com.farmafene.aurius.tm.UserTransactionLocatorJNDI" depends-on="IAuriusSLF4JFactory">
+		<property name="userTransactionName" value="java:comp/UserTransaction" />
+	</bean>
+
+</beans>

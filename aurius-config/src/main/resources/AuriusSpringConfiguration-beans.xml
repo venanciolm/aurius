@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
+        http://www.w3.org/2001/XMLSchema-instance
+        http://www.w3.org/2001/XMLSchema.xsd
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+
+	<bean id="IAuriusSLF4JFactory" name="com.farmafene.aurius.core.IAuriusSLF4JFactory"
+		class="com.farmafene.aurius.logback.AuriusLogbackFactory" lazy-init="false"
+		init-method="reset" />
+
+	<bean id="IGestorFinalizadas" name="com.farmafene.aurius.mngt.impl.IGestorFinalizadas"
+		class="com.farmafene.aurius.mngt.impl.GestorFinalizadasImpl"
+		depends-on="IAuriusSLF4JFactory" init-method="init">
+		<property name="workManager" ref="WorkManagerMngt" />
+		<property name="listeners">
+			<list>
+				<ref bean="TxFinalizadasListenerLog" />
+				<ref bean="DirectoryListener" />
+			</list>
+		</property>
+	</bean>
+	<bean id="TxFinalizadasListenerLog" class="com.farmafene.aurius.mngt.impl.TxFinalizadasListenerLog">
+		<property name="workManager" ref="WorkManagerMngt" />
+	</bean>
+	<bean id="DirectoryListener" class="com.farmafene.aurius.mngt.impl.DirectoryListener">
+		<property name="workManager" ref="WorkManagerMngt" />
+	</bean>
+	<bean id="WorkManagerMngt" class="com.farmafene.aurius.addons.wm.WorkManagerImpl"
+		init-method="start" destroy-method="stop">
+		<property name="name" value="MngtWM" />
+	</bean>
+
+	<bean id="IAuthenticationManager" name="com.farmafene.aurius.core.IAuthenticationManager"
+		class="com.farmafene.aurius.auth.impl.AuthManagerTest" init-method="afterPropertiesSet"
+		depends-on="IAuriusSLF4JFactory">
+		<property name="IAuriusUserFactory">
+			<bean class="com.farmafene.aurius.dao.FarmafeneAuriusUserFactory" />
+		</property>
+	</bean>
+	
+	<bean id="IUUIDFactory" name="com.farmafene.aurius.core.IUUIDFactory"
+		class="com.farmafene.aurius.uuidFactory.UUIDFactoryFarmafene"
+		depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="IDiccionarioCache" name="com.farmafene.aurius.core.IDiccionarioCache"
+		class="com.farmafene.aurius.dicImpl.DiccionarioCacheGuava"
+		init-method="init" depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="IDiccionarioFactory" name="com.farmafene.aurius.core.IDiccionarioFactory"
+		class="com.farmafene.aurius.dao.DiccionarioFactoryImpl" depends-on="IAuriusSLF4JFactory"
+		lazy-init="true" />
+
+	<bean id="SpringPluginFactory" class="com.farmafene.aurius.ioc.impl.SpringPluginFactory"
+		lazy-init="true" depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="AuriusHBPluginFactory" class="com.farmafene.hibernate.aurius.AuriusHBPluginFactory"
+		lazy-init="true" depends-on="IAuriusSLF4JFactory" />
+
+	<bean id="IAplicacionHolderPluginFactoriesLocator"
+		name="com.farmafene.aurius.core.IAplicacionHolderPluginFactoriesLocator"
+		class="com.farmafene.aurius.core.impl.AplicacionHolderPluginFactoriesLocatorImpl"
+		lazy-init="true" init-method="init" depends-on="AuriusHBPluginFactory">
+		<property name="iAplicacionHolderPluginFactories">
+			<list>
+				<ref bean="AuriusHBPluginFactory" />
+				<ref bean="SpringPluginFactory" />
+			</list>
+		</property>
+	</bean>
+
+	<bean id="IHibernateSessionFactoryFactory"
+		class="com.farmafene.hibernate.ContainerHBSessionFactoryFactory"
+		init-method="buildIHibernateSessionFactory" depends-on="AuriusSessionFactory"
+		lazy-init="true">
+		<property name="basePackage" value="" />
+		<property name="sessionProperties">
+			<set>
+				<ref bean="AuriusSessionFactory" />
+			</set>
+		</property>
+		<property name="resources">
+			<list>
+				<value>com.farmafene.aurius.dao.hibernate.AuriusSessionFactory.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.auth.RoleRol.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.DiccionarioDesc.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.ServicioSvr.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.TypeStringVO.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.auth.GrupoGrp.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.TypeTimeVO.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.TypeDecimalVO.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.RegistroReg.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.ServicioDesc.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.OperativasOp.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.DiccionarioDic.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.TypeBlobVO.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.auth.UserUsr.class</value>
+				<value>com.farmafene.aurius.dao.hibernate.dic.TypeRegistroVO.class</value>
+			</list>
+		</property>
+	</bean>
+
+	<bean id="AuriusSessionFactory" class="com.farmafene.hibernate.HBSessionFactoryProperties"
+		depends-on="IAuriusSLF4JFactory">
+		<property name="refName" value="AURIUS" />
+		<property name="dialect" value="org.hibernate.dialect.MySQL5InnoDBDialect" />
+		<property name="dataSource"
+			value="java:comp/env/farmafene.com/aurius/jdbc/XA/common" />
+	</bean>
+
+
+	<bean id="IHibernateSessionFactory" factory-method="getIHibernateSessionFactory"
+		factory-bean="IHibernateSessionFactoryFactory" lazy-init="true"
+		depends-on="IAuriusSLF4JFactory" />
+</beans>

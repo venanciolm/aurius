@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module xmlns="http://geronimo.apache.org/xml/ns/deployment-1.1">
+	<environment>
+		<moduleId>
+			<groupId>com.farmafene.aurius</groupId>
+			<artifactId>conf-global</artifactId>
+			<version>1.0</version>
+			<type>car</type>
+		</moduleId>
+		<dependencies>
+			<dependency>
+				<groupId>com.farmafene.aurius</groupId>
+                <artifactId>aurius-URLGBean</artifactId>
+				<type>jar</type>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.geronimo.framework</groupId>
+				<artifactId>rmi-naming</artifactId>
+				<version>2.2.1</version>
+				<type>car</type>
+			</dependency>
+		</dependencies>
+	</environment>
+
+	<gbean name="farmafene.com/aurius/conf/file" class="com.farmafene.aurius.geronimo.URLGBean">
+		<attribute name="url">file:///C:/Farmafene.com/aurius/conf/AuriusSpringConfiguration-beans.geronimo.xml</attribute>
+		<attribute name="jndiName">farmafene.com/aurius/conf/file</attribute>
+	</gbean>
+</module>

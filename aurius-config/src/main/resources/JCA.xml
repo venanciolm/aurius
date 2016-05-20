@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE properties SYSTEM "http://java.sun.com/dtd/properties.dtd">
+<properties>
+	<comment>Propiedades del Conector JCA</comment>
+	<entry key="JCA.BROKER">vm://AuriusBroker</entry>
+	<entry key="JCA.QUEUE.CLUSTER">AURIUS.JCA</entry>
+	<entry key="JCA.QUEUE.LOCAL">QUEUE.VLOPEZMW7</entry>
+<!-- 
+	<entry key="JCA.TOPIC"/>
+	<entry key="JCA.CLASS">org.apache.activemq.ActiveMQConnectionFactory</entry>
+	<entry key="JCA.USER"/>
+	<entry key="JCA.PWD"/>
+	<entry key="JCA.MSG.TIMEOUT"/>
+	<entry key="JCA.MSG.TIMETOLIVE"/>
+-->
+</properties>
