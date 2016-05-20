@@ -23,6 +23,7 @@
 		<module>aurius-impl</module>
 		<module>aurius-ddl</module>
 		<module>aurius-config</module>
+		<module>aurius-dao</module>
 	</modules>
 	<properties>
 		<!-- -->
@@ -305,6 +306,18 @@
 			<dependency>
 				<groupId>com.farmafene.aurius.commons</groupId>
 				<artifactId>aurius-ioc</artifactId>
+				<version>${project.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.farmafene.aurius.impl</groupId>
+				<artifactId>aurius-impl</artifactId>
+				<version>${project.version}</version>
+				<scope>compile</scope>
+			</dependency>
+			<dependency>
+				<groupId>com.farmafene.aurius.impl</groupId>
+				<artifactId>aurius-dao</artifactId>
 				<version>${project.version}</version>
 				<scope>compile</scope>
 			</dependency>

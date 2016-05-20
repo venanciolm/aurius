@@ -1,0 +1,40 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.farmafene.aurius.misc</groupId>
+		<artifactId>aurius-soa</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
+	</parent>
+	<description>Module: ${project.name}</description>
+	<name>${project.groupId}:${project.artifactId}:${project.version}:${project.packaging}</name>
+	<groupId>com.farmafene.aurius.impl</groupId>
+	<artifactId>aurius-dao</artifactId>
+	<dependencies>
+		<dependency>
+			<groupId>com.farmafene.aurius</groupId>
+			<artifactId>aurius-api-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.farmafene.aurius.impl</groupId>
+			<artifactId>aurius-impl</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.farmafene.aurius.commons</groupId>
+			<artifactId>aurius-hibernate</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.farmafene.aurius.commons</groupId>
+			<artifactId>aurius-ioc</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.farmafene.aurius.commons</groupId>
+			<artifactId>aurius-cas</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+		</dependency>
+	</dependencies>
+</project>
