@@ -1,0 +1,2 @@
+mysqldump -u system -pmanager -t --skip-extended-insert dic OPERATIVAS_OP SVR_ROL diccionario_dic registro_reg servicio_svrd servicio_svr 
+mysqldump -u system -pmanager -t --skip-extended-insert dic USUARIO_USR GRUPO_GRP ROLE_ROL GRP_GRP GRP_ROL USR_GRP USR_ROL 
