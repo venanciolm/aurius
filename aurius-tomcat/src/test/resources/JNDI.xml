@@ -36,6 +36,8 @@
 			<map>
 				<entry key="java:comp/env/farmafene.com/aurius/conf"
 					value-ref="test-config" />
+				<entry key="java:comp/env/farmafene.com/aurius/test"
+					value="un texto" />
 			</map>
 		</property>
 	</bean>

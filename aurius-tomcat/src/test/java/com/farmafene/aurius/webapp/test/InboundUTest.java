@@ -25,6 +25,7 @@ package com.farmafene.aurius.webapp.test;
 
 import java.sql.SQLException;
 
+import javax.naming.InitialContext;
 import javax.resource.spi.XATerminator;
 import javax.resource.spi.work.WorkManager;
 import javax.transaction.TransactionManager;
@@ -153,5 +154,9 @@ public class InboundUTest implements InitializingBean {
 			ps.print("|+--------------------------------------------*/");
 			logger.info("{}", ps);
 		}
+		String text = (String) new InitialContext()
+				.lookup("java:comp/env/farmafene.com/aurius/test");
+		logger.debug("El valor es: {}", text);
+		Assert.assertEquals("un texto", text);
 	}
 }
