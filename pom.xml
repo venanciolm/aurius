@@ -327,6 +327,13 @@
 				<scope>compile</scope>
 			</dependency>
 			<dependency>
+				<groupId>com.farmafene.aurius</groupId>
+				<artifactId>aurius-jca</artifactId>
+				<version>${project.version}</version>
+				<scope>compile</scope>
+			</dependency>
+
+			<dependency>
 				<groupId>com.farmafene.aurius.impl</groupId>
 				<artifactId>aurius-dao</artifactId>
 				<version>${project.version}</version>

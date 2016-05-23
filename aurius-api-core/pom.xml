@@ -25,14 +25,13 @@
 					</execution>
 				</executions>
 				<configuration>
-					<target>
+					<tasks>
 						<echo>Eliminando las implementaciones por defecto</echo>
-						<delete
-							file="target/classes/com/farmafene/aurius/mngt/impl/GestorMonitorizacion.class" />
+						<delete file="target/classes/com/farmafene/aurius/mngt/impl/" />
 						<delete
 							file="target/classes/com/farmafene/aurius/mngt/impl/ThreadManagement.class" />
 						<delete dir="target/classes/com/farmafene/aurius/core/impl" />
-					</target>
+					</tasks>
 				</configuration>
 			</plugin>
 		</plugins>
