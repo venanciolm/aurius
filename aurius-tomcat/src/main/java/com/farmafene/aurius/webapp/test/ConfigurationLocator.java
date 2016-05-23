@@ -30,6 +30,9 @@ import com.farmafene.commons.j2ee.tools.activemq.IConfigurationLocator;
 
 public class ConfigurationLocator implements IConfigurationLocator {
 
+	public ConfigurationLocator() {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * 

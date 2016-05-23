@@ -36,6 +36,9 @@ public class WatchDogListener implements ServletContextListener {
 	private static final Logger logger = LoggerFactory
 			.getLogger(WatchDogListener.class);
 
+	public WatchDogListener() {
+	}
+
 	/**
 	 * {@inheritDoc}
 	 * 
@@ -51,7 +54,7 @@ public class WatchDogListener implements ServletContextListener {
 						.getProperty("com.farmafene.aurius.ioc.IAuriusBeanFactory_file"));
 		logger.info("Configuracion.getConfigPath: {}",
 				Configuracion.getConfigPath());
-		
+
 	}
 
 	/**
