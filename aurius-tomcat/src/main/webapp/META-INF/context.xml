@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- https://tomcat.apache.org/tomcat-7.0-doc/config/context.html -->
+<!-- -->
+<!-- -->
+<!-- Descriptor de despliegue de Tomcat -->
+<!-- -->
+<Context path="/aurius/server" reloadable="true" override="true">
+	<Resource name="farmafene.com/aurius/conf" auth="Container"
+		type="java.net.URL" factory="com.farmafene.commons.ioc.ObjectFactoryFromString"
+		value="file:///D:/data/git/github/aurius/aurius-config/src/main/resources/TOMCAT.properties.xml" />
+	<!-- <Transaction factory="bitronix.tm.BitronixUserTransactionObjectFactory" 
+		/> -->
+	<!-- <Resource name="farmafene.com/aurius/ejb/Diccionario" auth="Container" -->
+	<!-- type="com.farmafene.aurius.core.DiccionarioLocalHome" factory="com.farmafene.aurius.ioc.AuriusBeanFactoryObjectFactory" -->
+	<!-- uniqueName="DiccionarioHome" /> -->
+	<!-- <Resource name="farmafene.com/aurius/ejb/GestorTx" auth="Container" -->
+	<!-- type="com.farmafene.aurius.core.GestorTxLocalHome" factory="com.farmafene.aurius.ioc.AuriusBeanFactoryObjectFactory" -->
+	<!-- uniqueName="GestorTxHome" /> -->
+	<!-- <Resource name="farmafene.com/aurius/jdbc/XA/common" auth="Container" -->
+	<!-- type="javax.sql.DataSource" factory="com.farmafene.aurius.ioc.AuriusBeanFactoryObjectFactory" -->
+	<!-- uniqueName="DiccionarioDS" /> -->
+</Context>

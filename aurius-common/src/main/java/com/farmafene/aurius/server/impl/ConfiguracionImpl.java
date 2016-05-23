@@ -176,10 +176,10 @@ public class ConfiguracionImpl implements IConfiguracion {
 		} finally {
 		}
 		if (salida == null) {
-			throw new IllegalArgumentException("Error en configuraci�n!!!!!");
+			throw new IllegalArgumentException("Error en configuración!!!!!");
 		}
 		if (logger.isDebugEnabled()) {
-			logger.debug("El directorio de configuraci�n es: " + salida);
+			logger.debug("El directorio de configuración es: " + salida);
 		}
 		return salida;
 	}
