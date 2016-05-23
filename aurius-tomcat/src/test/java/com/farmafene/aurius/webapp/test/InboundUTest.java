@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2015 farmafene.com
+ * Copyright (c) 2009-2016 farmafene.com
  * All rights reserved.
  *
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -22,6 +22,7 @@
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 package com.farmafene.aurius.webapp.test;
+
 import java.sql.SQLException;
 
 import javax.resource.spi.XATerminator;
@@ -42,10 +43,12 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import com.farmafene.aurius.core.AuriusContainerSubject;
 import com.farmafene.commons.j2ee.tools.jca.common.StringPrintStream;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(locations = { "classpath:SpringConfiguration.xml" })
+@ContextConfiguration(locations = { "classpath:JNDI.xml",
+		"classpath:SpringConfiguration.xml" })
 public class InboundUTest implements InitializingBean {
 
 	private static final Logger logger = LoggerFactory
@@ -107,13 +110,46 @@ public class InboundUTest implements InitializingBean {
 		Assert.assertNotNull(this.ctx.getBean(TransactionManager.class));
 		Assert.assertNotNull(this.ctx
 				.getBean(TransactionSynchronizationRegistry.class));
-		//AuriusContainerSubject.start();
 		Assert.assertNotNull(this.ctx.getBean(XATerminator.class));
 		if (logger.isDebugEnabled()) {
 			StringPrintStream ps = new StringPrintStream();
 			ps.println();
 			ps.println("/*--------------------------------------------+|");
-			ps.println("|| Existe el AtivationSpec                    ||");
+			ps.println("|| Starting.....                              ||");
+			ps.print("|+--------------------------------------------*/");
+			logger.info("{}", ps);
+		}
+		AuriusContainerSubject.start();
+		if (logger.isDebugEnabled()) {
+			StringPrintStream ps = new StringPrintStream();
+			ps.println();
+			ps.println("/*--------------------------------------------+|");
+			ps.println("|| Started                                    ||");
+			ps.print("|+--------------------------------------------*/");
+			logger.info("{}", ps);
+		}
+		if (logger.isDebugEnabled()) {
+			StringPrintStream ps = new StringPrintStream();
+			ps.println();
+			ps.println("/*--------------------------------------------+|");
+			ps.println("|| Stoping ......                             ||");
+			ps.print("|+--------------------------------------------*/");
+			logger.info("{}", ps);
+		}
+		if (logger.isDebugEnabled()) {
+			StringPrintStream ps = new StringPrintStream();
+			ps.println();
+			ps.println("/*--------------------------------------------+|");
+			ps.println("|| Stopped                                    ||");
+			ps.print("|+--------------------------------------------*/");
+			logger.info("{}", ps);
+		}
+		AuriusContainerSubject.stop();
+		if (logger.isDebugEnabled()) {
+			StringPrintStream ps = new StringPrintStream();
+			ps.println();
+			ps.println("/*--------------------------------------------+|");
+			ps.println("|| End....                                    ||");
 			ps.print("|+--------------------------------------------*/");
 			logger.info("{}", ps);
 		}

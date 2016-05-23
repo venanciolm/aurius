@@ -25,6 +25,7 @@
 		<module>aurius-config</module>
 		<module>aurius-dao</module>
 		<module>aurius-jca</module>
+		<module>aurius-tomcat</module>
 	</modules>
 	<properties>
 		<!-- -->
@@ -77,7 +78,7 @@
 		<derbyclient.VERSION>10.6.1.0</derbyclient.VERSION>
 		<servlet-api.VERSION>2.5</servlet-api.VERSION>
 		<xstream.VERSION>1.4.7</xstream.VERSION>
-		<commons-j2ee-tools.VERSION>1.1.0</commons-j2ee-tools.VERSION>
+		<commons-j2ee-tools.VERSION>1.2.0-SNAPSHOT</commons-j2ee-tools.VERSION>
 		<guava.VERSION>11.0.1</guava.VERSION>
 		<junit.VERSION>4.12</junit.VERSION>
 		<postgresql.VERSION>9.4.1208.jre7</postgresql.VERSION>

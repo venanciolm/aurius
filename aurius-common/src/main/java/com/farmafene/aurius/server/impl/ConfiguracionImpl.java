@@ -160,7 +160,8 @@ public class ConfiguracionImpl implements IConfiguracion {
 			defaultFile = f.getPath();
 			if (!f.isAbsolute()) {
 				logger.info("El fichero no es absoluto: " + f.getPath());
-				f = new File(System.getProperty("user.dir") + url.getFile());
+				f = new File(System.getProperty("user.dir")
+						+ File.separator + url.getFile());
 			}
 			logger.info("El fichero absoluto es: " + f.getPath());
 			if (f.isDirectory()) {

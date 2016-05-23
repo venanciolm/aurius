@@ -30,28 +30,12 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
-
-
-	<!-- <bean id="connectionFactory0" -->
-	<!-- class="com.farmafene.commons.j2ee.tools.jca.geronimo3.GeronimoConnectionFactoryFactoryBean"> -->
-	<!-- <property name="transactionManager" ref="transactionManager" /> -->
-	<!-- <property name="partitionStrategy" value="none" /> -->
-	<!-- <property name="transaction" value="xa" /> -->
-	<!-- <property name="poolMaxSize" value="1" /> -->
-	<!-- <property name="poolMinSize" value="1" /> -->
-	<!-- <property name="managedConnectionFactory" ref="managedConnectionFactory0" 
-		/> -->
-	<!-- </bean> -->
-	<!-- <bean id="managedConnectionFactory0" -->
-	<!-- class="com.farmafene.commons.j2ee.tools.jca.spi.inout.ManagedConnectionFactoryIODummy"> -->
-	<!-- <property name="xATerminator" ref="transactionManager" /> -->
-	<!-- <property name="activationSpec" ref="as" /> -->
-	<!-- </bean> -->
-	<!-- <bean id="ra" class="com.farmafene.commons.j2ee.tools.jca.ResourceAdapterLog" 
-		/> -->
-	<!-- <bean id="as" class="com.farmafene.commons.j2ee.tools.jca.ActivationSpecLog" 
-		/> -->
-
+	<bean lazy-init="false" id="broker"
+		class="com.farmafene.commons.j2ee.tools.activemq.Broker">
+		<property name="config" value="broker/activemq.xml" />
+		<property name="start" value="true" />
+		<property name="locator" ref="locator" />
+	</bean>
 	<bean id="transactionManager"
 		class="com.farmafene.commons.j2ee.tools.jca.geronimo3.GeronimoTransactionManagerFactory" />
 
@@ -102,6 +86,7 @@
 		<!-- <property name="" value="" /> -->
 		<property name="queue" value="JCA.LOCAL" />
 		<property name="clusterQueue" value="JCA.CLUSER" />
-		<property name="broker" value="vm:MyBroker" />
+		<property name="broker" value="vm:AuriusBroker" />
 	</bean>
+	<bean id="locator" class="com.farmafene.aurius.webapp.test.ConfigurationLocator" />
 </beans>
