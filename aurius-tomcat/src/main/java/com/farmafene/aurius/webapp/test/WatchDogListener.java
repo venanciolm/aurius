@@ -25,11 +25,13 @@ package com.farmafene.aurius.webapp.test;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+import javax.transaction.TransactionManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.farmafene.aurius.server.Configuracion;
+import com.farmafene.commons.ioc.BeanFactory;
 
 public class WatchDogListener implements ServletContextListener {
 
@@ -49,12 +51,21 @@ public class WatchDogListener implements ServletContextListener {
 		logger.info("contextInitialized({})", sce);
 		logger.info(
 				"Configuracion.getProperty: {} - {}",
-				"com.farmafene.aurius.ioc.IAuriusBeanFactory_file",
+				"com.farmafene.commons.ioc.IBeanFactory_file",
 				Configuracion
-						.getProperty("com.farmafene.aurius.ioc.IAuriusBeanFactory_file"));
+						.getProperty("com.farmafene.commons.ioc.IBeanFactory_file"));
 		logger.info("Configuracion.getConfigPath: {}",
 				Configuracion.getConfigPath());
-
+		logger.info("Implementado:  {}", BeanFactory.getIBeanFactory()
+				.getClass().getCanonicalName());
+		logger.info("Implementado:  {}", BeanFactory.getIBeanFactoryManager()
+				.getClass().getCanonicalName());
+		try {
+			logger.info("Implementado:  {}",
+					BeanFactory.getBean(TransactionManager.class));
+		} catch (Throwable th) {
+			logger.error("Tenemos", th);
+		}
 	}
 
 	/**

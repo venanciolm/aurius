@@ -150,9 +150,11 @@ public class BeanFactoryImpl implements IBeanFactory {
 					return;
 				}
 				try {
+					logger.info("Estamos por aquí!!!");
 					SpringApplicationContextFactory f = new SpringApplicationContextFactory();
 					factory = f.getISpringConfigurableApplicationContext()
 							.getSpringConfigurableApplicationContext();
+					logger.info("La factoría es: {}", factory);
 				} finally {
 					if (factory != null) {
 						INIT = true;

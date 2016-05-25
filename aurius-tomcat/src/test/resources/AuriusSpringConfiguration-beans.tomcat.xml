@@ -1,0 +1,57 @@
+	<bean lazy-init="false" id="broker"
+		class="com.farmafene.commons.j2ee.tools.activemq.Broker">
+		<property name="config" value="broker/activemq.xml" />
+		<property name="start" value="true" />
+	</bean>
+	<bean id="transactionManager"
+		class="com.farmafene.commons.j2ee.tools.jca.geronimo3.GeronimoTransactionManagerFactory" />
+
+	<bean id="workManager"
+		class="com.farmafene.commons.j2ee.tools.jca.geronimo3.GeronimoWorkManagerFactory">
+		<property name="poolSize" value="10" />
+		<property name="releasePoolSize" value="1" />
+		<property name="maxWorks" value="10" />
+		<property name="xaWork" ref="transactionManager" />
+	</bean>
+
+	<bean id="IEnlistXAResource"
+		class="com.farmafene.commons.j2ee.tools.jca.DefaultEnlistXAResource">
+		<property name="transactionManager" ref="transactionManager" />
+	</bean>
+	<bean id="Container"
+		class="com.farmafene.commons.j2ee.tools.jca.DefaultResourceAdapterContainer">
+		<property name="resourceAdapter" ref="ra" />
+		<property name="bootstrapContext">
+			<bean
+				class="com.farmafene.commons.j2ee.tools.jca.BootstrapContextFactoryBean">
+				<property name="workManager" ref="workManager" />
+				<property name="XATerminator" ref="transactionManager" />
+				<property name="transactionSynchronizationRegistry" ref="transactionManager" />
+			</bean>
+		</property>
+	</bean>
+
+	<bean id="myActivationSpec"
+		class="com.farmafene.commons.j2ee.tools.jca.DefaultActivationSpecContainer">
+		<property name="resourceAdapter" ref="ra" />
+		<property name="activationSpec" ref="as" />
+		<property name="MessageEndpointFactory" ref="MessageEndPointFactory" />
+	</bean>
+
+	<bean id="MessageEndPointFactory"
+		class="com.farmafene.commons.j2ee.tools.jca.DefaultMessageEndPointFactory">
+		<property name="resourceAdapter" ref="ra" />
+		<property name="messageDrivenBeanInterface" value="com.farmafene.aurius.jca.AuriusListener" />
+		<property name="messageDrivenBeanClass" value="com.farmafene.aurius.jca.AuriusMDBWrapper" />
+		<property name="IEnlistXAResource" ref="IEnlistXAResource" />
+	</bean>
+
+	<bean id="ra" class="com.farmafene.aurius.jca.AuriusResourceAdapter">
+		<!-- <property name="" value="" /> -->
+	</bean>
+	<bean id="as" class="com.farmafene.aurius.jca.AuriusJMSActivationSpecBasic">
+		<!-- <property name="" value="" /> -->
+		<property name="queue" value="JCA.LOCAL" />
+		<property name="clusterQueue" value="JCA.CLUSER" />
+		<property name="broker" value="vm:AuriusBroker" />
+	</bean>
