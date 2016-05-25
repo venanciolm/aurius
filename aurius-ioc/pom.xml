@@ -18,16 +18,18 @@
 				<artifactId>maven-antrun-plugin</artifactId>
 				<executions>
 					<execution>
+						<id>delete-dummy</id>
+						<phase>process-classes</phase>
 						<goals>
 							<goal>run</goal>
 						</goals>
-						<phase>process-classes</phase>
 					</execution>
 				</executions>
 				<configuration>
 					<tasks>
-						<echo>Eliminando las implementaciones por defecto</echo>
-						<delete dir="target/classes/com/farmafene/aurius/ioc/impl" />
+						<echo>Eliminando implementación dummy</echo>
+						<delete
+							file="${project.build.directory}/classes/com/farmafene/commons/ioc/impl/BeanFactoryImpl.class" />
 					</tasks>
 				</configuration>
 			</plugin>

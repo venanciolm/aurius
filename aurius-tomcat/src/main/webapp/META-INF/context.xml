@@ -7,7 +7,7 @@
 <Context path="/aurius/server" reloadable="true" override="true">
 	<Resource name="farmafene.com/aurius/conf" auth="Container"
 		type="java.net.URL" factory="com.farmafene.commons.ioc.ObjectFactoryFromString"
-		value="file:///D:/data/git/github/aurius/aurius-config/src/main/resources/TOMCAT.properties.xml" />
+		value="file:///C:/Users/vlopezm/git/aurius/aurius-tomcat/src/test/resources/TOMCAT.properties.xml" />
 	<!-- <Transaction factory="bitronix.tm.BitronixUserTransactionObjectFactory" 
 		/> -->
 	<!-- <Resource name="farmafene.com/aurius/ejb/Diccionario" auth="Container" -->
