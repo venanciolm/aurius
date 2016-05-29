@@ -37,12 +37,12 @@ public class URLConnectionUtilMainTest {
 			.getLogger(URLConnectionUtilMainTest.class);
 
 	public static void main(String... args) throws IOException {
-		String serverUrl = "https://cas.farmafene.com";
-		String username = "vlopez";
-		String password = "71hidalgo";
-		String service1 = "https://sample01.farmafene.com";
-		String service2 = "https://sample02.farmafene.com";
-		String service3 = "https://sample03.farmafene.com";
+		String serverUrl = "https://<aaa>.yourdomain";
+		String username = "<user>";
+		String password = "<passwor>";
+		String service1 = "https://<example1>.yourdomain";
+		String service2 = "https://<example2>.yourdomain";
+		String service3 = "https://<example3>.yourdomain";
 		RestCasClient client = new RestCasClient();
 		client.setServerBase(serverUrl);
 
