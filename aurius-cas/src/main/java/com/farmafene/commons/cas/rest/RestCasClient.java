@@ -28,6 +28,7 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.StringReader;
 import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
@@ -41,6 +42,12 @@ import java.util.regex.Pattern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.Attributes;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
+import org.xml.sax.helpers.DefaultHandler;
+import org.xml.sax.helpers.XMLReaderFactory;
 
 import com.farmafene.aurius.AuriusAuthException;
 
@@ -122,6 +129,74 @@ public class RestCasClient {
 			sb.append(URLEncoder.encode(items.get(var), enc));
 		}
 		return sb.toString();
+	}
+
+	/**
+	 * Get an instance of an XML reader from the XMLReaderFactory.
+	 * 
+	 * @return the XMLReader.
+	 */
+	private XMLReader getXmlReader() {
+		try {
+			return XMLReaderFactory.createXMLReader();
+		} catch (final SAXException e) {
+			throw new RuntimeException("Unable to create XMLReader", e);
+		}
+	}
+
+	/**
+	 * Retrieve the text for a specific element (when we know there is only
+	 * one).
+	 * 
+	 * @param xmlAsString
+	 *            the xml response
+	 * @param element
+	 *            the element to look for
+	 * @return the text value of the element.
+	 */
+	private String getTextForElement(final String xmlAsString,
+			final String element) {
+		final XMLReader reader = getXmlReader();
+		final StringBuffer buffer = new StringBuffer();
+
+		final DefaultHandler handler = new DefaultHandler() {
+
+			private boolean foundElement = false;
+
+			public void startElement(final String uri, final String localName,
+					final String qName, final Attributes attributes)
+					throws SAXException {
+				if (localName.equals(element)) {
+					this.foundElement = true;
+				}
+			}
+
+			public void endElement(final String uri, final String localName,
+					final String qName) throws SAXException {
+				if (localName.equals(element)) {
+					this.foundElement = false;
+				}
+			}
+
+			public void characters(char[] ch, int start, int length)
+					throws SAXException {
+				if (this.foundElement) {
+					buffer.append(ch, start, length);
+				}
+			}
+		};
+
+		reader.setContentHandler(handler);
+		reader.setErrorHandler(handler);
+
+		try {
+			reader.parse(new InputSource(new StringReader(xmlAsString)));
+		} catch (final Exception e) {
+			logger.error("", e);
+			return null;
+		}
+
+		return buffer.toString();
 	}
 
 	public String getTicketGrantingTicket(String username, String password)
