@@ -76,7 +76,23 @@ public class RestCasClient {
 
 	}
 
-	HttpURLConnection getHttpConnection(String url, Method type,
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append(getClass().getSimpleName());
+		sb.append("={");
+		sb.append("serverBase=").append(serverBase);
+		sb.append(", restServlet=").append(restServlet);
+		sb.append("}");
+		return sb.toString();
+	}
+
+	private HttpURLConnection getHttpConnection(String url, Method type,
 			int connectTimeoutMs, int readTimeoutMs, String charEncoding,
 			String contentType) throws ProtocolException, IOException,
 			MalformedURLException {
@@ -94,7 +110,7 @@ public class RestCasClient {
 		return con;
 	}
 
-	public static String urlEncode(Map<String, String> items, String enc)
+	private String urlEncode(Map<String, String> items, String enc)
 			throws UnsupportedEncodingException {
 		StringBuilder sb = new StringBuilder();
 		for (String var : items.keySet()) {
@@ -214,6 +230,53 @@ public class RestCasClient {
 		return ticket;
 	}
 
+	public String getProxyServiceTicket(String ticketGrantingTicket,
+			String service) throws AuriusAuthException {
+		String ticket = null;
+		if (ticketGrantingTicket == null) {
+			return ticket;
+		}
+		HttpURLConnection con = null;
+		try {
+			Map<String, String> items = new HashMap<String, String>();
+			items.put("pgt", ticketGrantingTicket);
+			items.put("targetService", service);
+			String urlParameters = urlEncode(items, encoding);
+			con = getHttpConnection(serverBase + "/proxy?" + urlParameters,
+					Method.GET, connectTimeoutMs, readTimeoutMs, encoding,
+					URL_ENCODED);
+
+			con.setUseCaches(false);
+			con.connect();
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de getProxyServiceTicket es: '{}'",
+					responseCode);
+			switch (responseCode) {
+			case HttpURLConnection.HTTP_OK:
+				// reading the ticket
+				InputStreamReader isr = new InputStreamReader(
+						con.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
+				ticket = br.readLine();
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
+			default:
+				logger.warn("Invalid request: {} - {}", responseCode,
+						con.getResponseMessage());
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
+			}
+		} catch (IOException e) {
+			throw new AuriusAuthException(e);
+		} finally {
+			if (null != con) {
+				con.disconnect();
+			}
+		}
+		return ticket;
+	}
+
 	public String validate(String service, String serviceTicket)
 			throws AuriusAuthException {
 		String user = null;
@@ -223,9 +286,11 @@ public class RestCasClient {
 		HttpURLConnection con = null;
 		try {
 			String urlParameters = urlEncode(items, encoding);
-			con = getHttpConnection(serverBase + "/validate?" + urlParameters,
-					Method.GET, connectTimeoutMs, readTimeoutMs, encoding,
-					CONTENT_TYPE);
+			con = getHttpConnection(
+					this.serverBase
+							+ (this.serverBase.endsWith("/") ? "" : "/")
+							+ "validate?" + urlParameters, Method.GET,
+					connectTimeoutMs, readTimeoutMs, encoding, CONTENT_TYPE);
 			con.setUseCaches(false);
 			con.connect();
 			int responseCode = con.getResponseCode();
@@ -238,6 +303,57 @@ public class RestCasClient {
 				if (YES.equals(br.readLine())) {
 					user = br.readLine();
 				} else {
+					throw new AuriusAuthException("Invalid ticket: " + service
+							+ "-" + serviceTicket);
+				}
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
+			default:
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
+			}
+		} catch (IOException e) {
+			throw new AuriusAuthException(e);
+		} finally {
+			if (null != con) {
+				con.disconnect();
+			}
+		}
+		return user;
+	}
+
+	public String proxyValidate(String service, String serviceTicket)
+			throws AuriusAuthException {
+		String user = null;
+		Map<String, String> items = new HashMap<String, String>();
+		items.put(TICKET, serviceTicket);
+		items.put(SERVICE, service);
+		HttpURLConnection con = null;
+		try {
+			String urlParameters = urlEncode(items, encoding);
+			con = getHttpConnection(
+					this.serverBase
+							+ (this.serverBase.endsWith("/") ? "" : "/")
+							+ "proxyValidate?" + urlParameters, Method.GET,
+					connectTimeoutMs, readTimeoutMs, encoding, CONTENT_TYPE);
+			con.setUseCaches(false);
+			con.connect();
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de validate es: '{}'", responseCode);
+			switch (responseCode) {
+			case HttpURLConnection.HTTP_OK:
+				InputStreamReader isr = new InputStreamReader(
+						con.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
+				String line = br.readLine();
+				if (YES.equals(line)) {
+					user = line;
+				} else {
+					logger.info(line);
+					while (br.ready()) {
+						logger.info(br.readLine());
+					}
 					throw new AuriusAuthException("Invalid ticket: " + service
 							+ "-" + serviceTicket);
 				}
@@ -287,42 +403,77 @@ public class RestCasClient {
 		}
 	}
 
+	/**
+	 * @return the serverBase
+	 */
 	public String getServerBase() {
 		return serverBase;
 	}
 
+	/**
+	 * @param serverBase
+	 *            the serverBase to set
+	 */
 	public void setServerBase(String serverBase) {
 		this.serverBase = serverBase;
 	}
 
+	/**
+	 * @return the restServlet
+	 */
 	public String getRestServlet() {
 		return restServlet;
 	}
 
+	/**
+	 * @param restServlet
+	 *            the restServlet to set
+	 */
 	public void setRestServlet(String restServlet) {
 		this.restServlet = restServlet;
 	}
 
+	/**
+	 * @return the encoding
+	 */
 	public String getEncoding() {
 		return encoding;
 	}
 
+	/**
+	 * @param encoding
+	 *            the encoding to set
+	 */
 	public void setEncoding(String encoding) {
 		this.encoding = encoding;
 	}
 
+	/**
+	 * @return the connectTimeoutMs
+	 */
 	public int getConnectTimeoutMs() {
 		return connectTimeoutMs;
 	}
 
+	/**
+	 * @param connectTimeoutMs
+	 *            the connectTimeoutMs to set
+	 */
 	public void setConnectTimeoutMs(int connectTimeoutMs) {
 		this.connectTimeoutMs = connectTimeoutMs;
 	}
 
+	/**
+	 * @return the readTimeoutMs
+	 */
 	public int getReadTimeoutMs() {
 		return readTimeoutMs;
 	}
 
+	/**
+	 * @param readTimeoutMs
+	 *            the readTimeoutMs to set
+	 */
 	public void setReadTimeoutMs(int readTimeoutMs) {
 		this.readTimeoutMs = readTimeoutMs;
 	}

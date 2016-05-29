@@ -5,7 +5,7 @@ import java.util.Properties;
 import com.farmafene.aurius.AuriusAuthException;
 import com.farmafene.aurius.AuthInfo;
 
-public interface ILoginUtil {
+public interface ILoginUtil extends IWrapperClass {
 
 	AuthInfo createInfo(Properties props) throws AuriusAuthException;;
 

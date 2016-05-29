@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2009-2012 farmafene.com
+ * Copyright (c) 2009-2016 farmafene.com
  * All rights reserved.
  * 
  * Permission is hereby granted, free  of charge, to any person obtaining
@@ -21,11 +21,9 @@
  * OF CONTRACT, TORT OR OTHERWISE,  ARISING FROM, OUT OF OR IN CONNECTION
  * WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-package com.farmafene.commons.cas;
+package com.farmafene.commons.cas.rest;
 
 import java.util.Properties;
-
-import org.apache.http.cookie.Cookie;
 
 import com.farmafene.aurius.AuriusAuthException;
 import com.farmafene.aurius.AuthInfo;
@@ -33,18 +31,31 @@ import com.farmafene.aurius.util.ILoginUtil;
 import com.farmafene.aurius.util.IOnInitValidate;
 import com.farmafene.aurius.util.IWrapperClass;
 import com.farmafene.aurius.util.WrapperClassContainer;
+import com.farmafene.commons.cas.AuthInfoLoginPassword;
 
 @SuppressWarnings("serial")
-public class LoginUtilCas implements ILoginUtil, IOnInitValidate, IWrapperClass {
+public class LoginUtilCasRest implements ILoginUtil, IOnInitValidate,
+		IWrapperClass {
 
-	private LoginTGT loginTGT;
 	private String casServerURL;
-	private String casTGCName;
-	private String jSessionCookieName;
+	private String restPath = "/v1/tickets";
+	private RestCasClient client;
 	private IWrapperClass wrapperClass;
 
-	public LoginUtilCas() {
+	public LoginUtilCasRest() {
 		wrapperClass = new WrapperClassContainer(this);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.util.IOnInitValidate#afterPropertiesSet()
+	 */
+	@Override
+	public void afterPropertiesSet() throws IllegalArgumentException {
+		this.client = new RestCasClient();
+		client.setServerBase(casServerURL);
+		client.setRestServlet(restPath);
 	}
 
 	/**
@@ -57,43 +68,9 @@ public class LoginUtilCas implements ILoginUtil, IOnInitValidate, IWrapperClass 
 		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getSimpleName());
 		sb.append("={");
-		sb.append("loginTGT=").append(loginTGT);
+		sb.append(client);
 		sb.append("}");
 		return sb.toString();
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.util.IWrapperClass#isWrapperFor(java.lang.Class)
-	 */
-	@Override
-	public <T> boolean isWrapperFor(Class<T> iface) {
-		return wrapperClass.isWrapperFor(iface);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.util.IWrapperClass#unwrap(java.lang.Class)
-	 */
-	@Override
-	public <T> T unwrap(Class<T> iface) {
-		return wrapperClass.unwrap(iface);
-	}
-
-	/**
-	 * {@inheritDoc}
-	 * 
-	 * @see com.farmafene.aurius.shell.utils.IOnInitValidate#afterPropertiesSet()
-	 */
-	@Override
-	public void afterPropertiesSet() throws IllegalArgumentException {
-		this.loginTGT = new LoginTGT();
-		loginTGT.setCasServerURL(casServerURL);
-		loginTGT.setCasTGCName(casTGCName);
-		loginTGT.setJSessionCookieName(jSessionCookieName);
-		loginTGT.afterPropertiesSet();
 	}
 
 	/**
@@ -117,19 +94,41 @@ public class LoginUtilCas implements ILoginUtil, IOnInitValidate, IWrapperClass 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.shell.ILoginUtil#processLogin(com.farmafene.aurius.AuthInfo)
+	 * @see com.farmafene.aurius.util.ILoginUtil#processLogin(com.farmafene.aurius.AuthInfo)
 	 */
 	@Override
 	public AuthInfo processLogin(AuthInfo info) throws AuriusAuthException {
-		Cookie tGT = loginTGT.doLogin(info.unwrap(AuthInfoLoginPassword.class)
-				.getLogin(), info.unwrap(AuthInfoLoginPassword.class)
-				.getPassword());
+		String ticketGrantingTicket = client.getTicketGrantingTicket(info
+				.unwrap(AuthInfoLoginPassword.class).getLogin(),
+				info.unwrap(AuthInfoLoginPassword.class).getPassword());
 		AuthInfoCas salida = null;
-		if (null != tGT) {
+		if (null != ticketGrantingTicket) {
 			salida = new AuthInfoCas();
-			salida.setCookie(tGT);
+			salida.setTicketGrantingTicket(ticketGrantingTicket);
 		}
 		return salida;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.util.ILoginUtil#processLogout(com.farmafene.aurius.AuthInfo)
+	 */
+	@Override
+	public void processLogout(AuthInfo info) {
+		if (null == info) {
+			throw new AuriusAuthException(new NullPointerException(
+					"Info must be not null!"));
+		}
+		if (info.isWrapperFor(AuthInfoCas.class)) {
+			client.logout(info.unwrap(AuthInfoCas.class)
+					.getTicketGrantingTicket());
+		} else {
+			throw new AuriusAuthException(String.format(
+					"Invalid auth: %1$s vs. %2$s", info.getClass()
+							.getCanonicalName(), AuthInfoCas.class
+							.getCanonicalName()));
+		}
 	}
 
 	/**
@@ -139,17 +138,27 @@ public class LoginUtilCas implements ILoginUtil, IOnInitValidate, IWrapperClass 
 	 */
 	@Override
 	public AuthInfo getServerAuthInfo(AuthInfo info) {
-		return info.unwrap(AuthInfoCas.class).getServerAuthInfo();
+		return info.unwrap(AuthInfoCas.class);
 	}
 
 	/**
 	 * {@inheritDoc}
 	 * 
-	 * @see com.farmafene.aurius.shell.ILoginUtil#processLogout(com.farmafene.aurius.AuthInfo)
+	 * @see com.farmafene.aurius.util.IWrapperClass#isWrapperFor(java.lang.Class)
 	 */
 	@Override
-	public void processLogout(AuthInfo info) {
-		loginTGT.doLogout(info.unwrap(AuthInfoCas.class).getCookie());
+	public <T> boolean isWrapperFor(Class<T> iface) {
+		return wrapperClass.isWrapperFor(iface);
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
+	 * @see com.farmafene.aurius.util.IWrapperClass#unwrap(java.lang.Class)
+	 */
+	@Override
+	public <T> T unwrap(Class<T> iface) {
+		return wrapperClass.unwrap(iface);
 	}
 
 	/**
@@ -168,32 +177,24 @@ public class LoginUtilCas implements ILoginUtil, IOnInitValidate, IWrapperClass 
 	}
 
 	/**
-	 * @return the casTGCName
+	 * @return the restPath
 	 */
-	public String getCasTGCName() {
-		return casTGCName;
+	public String getRestPath() {
+		return restPath;
 	}
 
 	/**
-	 * @param casTGCName
-	 *            the casTGCName to set
+	 * @param restPath
+	 *            the restPath to set
 	 */
-	public void setCasTGCName(String casTGCName) {
-		this.casTGCName = casTGCName;
+	public void setRestPath(String restPath) {
+		this.restPath = restPath;
 	}
 
 	/**
-	 * @return the jSessionCookieName
+	 * @return the client
 	 */
-	public String getjSessionCookieName() {
-		return jSessionCookieName;
-	}
-
-	/**
-	 * @param jSessionCookieName
-	 *            the jSessionCookieName to set
-	 */
-	public void setjSessionCookieName(String jSessionCookieName) {
-		this.jSessionCookieName = jSessionCookieName;
+	public RestCasClient getClient() {
+		return client;
 	}
 }

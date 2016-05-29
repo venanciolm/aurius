@@ -35,13 +35,13 @@ import com.farmafene.aurius.AuriusAuthException;
 /**
  * @see https://wiki.jasig.org/display/CASUM/RESTful+API
  */
-public class RestCasClientJunitTest {
+public class RestCasClientTestJunit {
 
-	private static final String USER_NAME = "vlopez";
-	private static final String PWD = "<password>";
-	private static final String CAS_SERVER = "https://<host>";
+	private static final String USER_NAME = "<USER>";
+	private static final String PWD = "<PASSWORD>";
+	private static final String CAS_SERVER = "<SERVICE>";
 	private static final Logger logger = LoggerFactory
-			.getLogger(RestCasClientJunitTest.class);
+			.getLogger(RestCasClientTestJunit.class);
 
 	@Test
 	public void main() throws IOException {
@@ -103,6 +103,12 @@ public class RestCasClientJunitTest {
 		response = client.validate(service3, ticket);
 		logger.info("La respuesta es: '{}'", response);
 		Assert.assertEquals(USER_NAME, response);
+		//
+		// ticket = client.getServiceTicket(tgt, service3);
+		// logger.info("El ticket 4 es:  '{}'", ticket);
+		// response = client.proxyValidate(service3, ticket);
+		// logger.info("La respuesta es: '{}'", response);
+		// Assert.assertEquals(USER_NAME, response);
 		client.logout(tgt);
 	}
 }
