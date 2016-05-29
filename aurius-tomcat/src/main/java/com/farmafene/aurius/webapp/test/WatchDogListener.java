@@ -60,6 +60,7 @@ public class WatchDogListener implements ServletContextListener {
 				.getClass().getCanonicalName());
 		logger.info("Implementado:  {}", BeanFactory.getIBeanFactoryManager()
 				.getClass().getCanonicalName());
+		logger.info("Implementado:  {}", BeanFactory.getIBeanFactoryManager());
 		try {
 			logger.info("Implementado:  {}",
 					BeanFactory.getBean(TransactionManager.class));
