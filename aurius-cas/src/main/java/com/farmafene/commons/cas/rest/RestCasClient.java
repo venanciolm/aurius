@@ -42,7 +42,11 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.farmafene.aurius.AuriusAuthException;
+
 public class RestCasClient {
+
+	private static final String YES = "yes";
 
 	private static enum Method {
 		POST, PUT, DELETE, GET
@@ -104,7 +108,8 @@ public class RestCasClient {
 		return sb.toString();
 	}
 
-	public String getTicketGrantingTicket(String username, String password) {
+	public String getTicketGrantingTicket(String username, String password)
+			throws AuriusAuthException {
 		HttpURLConnection con = null;
 		InputStream is = null;
 		String response = null;
@@ -121,11 +126,13 @@ public class RestCasClient {
 			con.setRequestProperty(CONTENT_LENGTH,
 					Integer.toString(postDataLength));
 			con.setUseCaches(false);
-			con.connect();
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 			wr.write(postData);
 			con.connect();
-			switch (con.getResponseCode()) {
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de getTicketGrantingTicket es: '{}'",
+					responseCode);
+			switch (responseCode) {
 			case HttpURLConnection.HTTP_CREATED:
 				// reading the TGT
 				is = con.getInputStream();
@@ -138,16 +145,14 @@ public class RestCasClient {
 				}
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
-				// for example: invalid
-				break;
+				throw new AuriusAuthException("Invalid credentials");
 			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
-				// the documentation say it is posible
-				break;
 			default:
-				// other thing!
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
 			}
 		} catch (IOException e) {
-			// TODO - error in connection!
+			throw new AuriusAuthException(e);
 		} finally {
 			if (null != con) {
 				con.disconnect();
@@ -157,7 +162,7 @@ public class RestCasClient {
 	}
 
 	public String getServiceTicket(String ticketGrantingTicket, String service)
-			throws IOException {
+			throws AuriusAuthException {
 		String ticket = null;
 		if (ticketGrantingTicket == null) {
 			return ticket;
@@ -180,7 +185,10 @@ public class RestCasClient {
 			DataOutputStream wr = new DataOutputStream(con.getOutputStream());
 			wr.write(postData);
 			con.connect();
-			switch (con.getResponseCode()) {
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de getServiceTicket es: '{}'",
+					responseCode);
+			switch (responseCode) {
 			case HttpURLConnection.HTTP_OK:
 				// reading the ticket
 				InputStreamReader isr = new InputStreamReader(
@@ -189,16 +197,15 @@ public class RestCasClient {
 				ticket = br.readLine();
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
-				// for example: invalid
-				break;
 			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
-				// the documentation say it is posible
-				break;
 			default:
-				// other thing!
+				logger.warn("Invalid request: {} - {}", responseCode,
+						con.getResponseMessage());
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
 			}
 		} catch (IOException e) {
-			// TODO - error in connection!
+			throw new AuriusAuthException(e);
 		} finally {
 			if (null != con) {
 				con.disconnect();
@@ -208,26 +215,50 @@ public class RestCasClient {
 	}
 
 	public String validate(String service, String serviceTicket)
-			throws IOException {
+			throws AuriusAuthException {
 		String user = null;
 		Map<String, String> items = new HashMap<String, String>();
 		items.put(TICKET, serviceTicket);
 		items.put(SERVICE, service);
-		String urlParameters = urlEncode(items, encoding);
-		HttpURLConnection con = getHttpConnection(serverBase + "/validate?"
-				+ urlParameters, Method.GET, connectTimeoutMs, readTimeoutMs,
-				encoding, CONTENT_TYPE);
-		con.setUseCaches(false);
-		InputStreamReader isr = new InputStreamReader(con.getInputStream());
-		BufferedReader br = new BufferedReader(isr);
-		if ("yes".equals(br.readLine())) {
-			user = br.readLine();
+		HttpURLConnection con = null;
+		try {
+			String urlParameters = urlEncode(items, encoding);
+			con = getHttpConnection(serverBase + "/validate?" + urlParameters,
+					Method.GET, connectTimeoutMs, readTimeoutMs, encoding,
+					CONTENT_TYPE);
+			con.setUseCaches(false);
+			con.connect();
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de validate es: '{}'", responseCode);
+			switch (responseCode) {
+			case HttpURLConnection.HTTP_OK:
+				InputStreamReader isr = new InputStreamReader(
+						con.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
+				if (YES.equals(br.readLine())) {
+					user = br.readLine();
+				} else {
+					throw new AuriusAuthException("Invalid ticket: " + service
+							+ "-" + serviceTicket);
+				}
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
+			default:
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
+			}
+		} catch (IOException e) {
+			throw new AuriusAuthException(e);
+		} finally {
+			if (null != con) {
+				con.disconnect();
+			}
 		}
-		con.disconnect();
 		return user;
 	}
 
-	public void logout(String ticketGrantingTicket) throws IOException {
+	public void logout(String ticketGrantingTicket) throws AuriusAuthException {
 		HttpURLConnection con = null;
 		try {
 			con = getHttpConnection(serverBase + restServlet + "/"
@@ -236,6 +267,7 @@ public class RestCasClient {
 			con.setUseCaches(false);
 			con.connect();
 			int responseCode = con.getResponseCode();
+			logger.debug("El response de logout es: '{}'", responseCode);
 			switch (responseCode) {
 			case HttpURLConnection.HTTP_OK:
 				// do nothing
@@ -243,12 +275,11 @@ public class RestCasClient {
 			case HttpURLConnection.HTTP_BAD_REQUEST:
 			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
 			default:
-				logger.debug("El código de respuesta es: {}", responseCode);
-				// TODO 
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
 			}
-
 		} catch (IOException e) {
-			// todo
+			throw new AuriusAuthException(e);
 		} finally {
 			if (null != con) {
 				con.disconnect();

@@ -41,7 +41,7 @@ public class TestComposite {
 		CompositeAuthenticationHandler ch = new CompositeAuthenticationHandler();
 		ch.setHandlers(lista);
 		URLAuthenticationHandler h1 = new URLAuthenticationHandler();
-		h1.setLoginURL("http://vlopezm-w7/sites/redmine/users/current.json");
+		h1.setLoginURL("http://vlopezm/sites/redmine/users/current.json");
 		NTLMAuthenticationHandler h2 = new NTLMAuthenticationHandler();
 		h2.setDomainController("VLOPEZM-W7");
 		UsernamePasswordCredentials credentials = new UsernamePasswordCredentials();
