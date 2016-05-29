@@ -38,8 +38,8 @@ import com.farmafene.aurius.AuriusAuthException;
 public class RestCasClientJunitTest {
 
 	private static final String USER_NAME = "vlopez";
-	private static final String PWD = "71hidalgo";
-	private static final String CAS_SERVER = "https://cas.farmafene.com";
+	private static final String PWD = "<password>";
+	private static final String CAS_SERVER = "https://<host>";
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestCasClientJunitTest.class);
 
