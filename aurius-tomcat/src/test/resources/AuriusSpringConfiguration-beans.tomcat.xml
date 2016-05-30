@@ -30,10 +30,13 @@
         http://www.springframework.org/schema/beans/spring-beans-2.5.xsd
         http://www.springframework.org/schema/context
         http://www.springframework.org/schema/context/spring-context-2.5.xsd">
+	<bean id="IAuriusLogbackFactory" class="com.farmafene.aurius.logback.AuriusLogbackFactory" />
+	<bean id="configLocator" class="com.farmafene.aurius.webapp.test.ConfigurationLocator" />
 	<bean lazy-init="false" id="broker"
 		class="com.farmafene.commons.j2ee.tools.activemq.Broker">
 		<property name="config" value="broker/activemq.xml" />
 		<property name="start" value="true" />
+		<property name="locator" ref="configLocator" />
 	</bean>
 	<bean id="transactionManager"
 		class="com.farmafene.commons.j2ee.tools.jca.geronimo3.GeronimoTransactionManagerFactory" />

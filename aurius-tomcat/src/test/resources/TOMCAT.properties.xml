@@ -3,6 +3,7 @@
 <properties>
 	<comment>Propiedades Aurius-TOMCAT</comment>
 	<entry key="com.farmafene.commons.ioc.IBeanFactory_file">AuriusSpringConfiguration-beans.tomcat.xml</entry>
+	<entry key="com.farmafene.aurius.core.IAuriusSLF4JFactory_file">logback-test.xml</entry>
 	<entry key="DB.AURIUS_hibernate.dialect">org.hibernate.dialect.MySQL5InnoDBDialect</entry>
 <!-- 	<entry key="hibernate.transaction.manager_lookup_class">com.farmafene.aurius.addons.tx.BTMTxLookup</entry> -->
 	<entry key="hibernate.transaction.manager_lookup_class">com.farmafene.aurius.addons.tx.btm.BTMTxLookup</entry>

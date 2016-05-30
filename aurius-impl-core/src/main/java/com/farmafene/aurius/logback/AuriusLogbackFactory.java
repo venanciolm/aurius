@@ -24,16 +24,11 @@
 package com.farmafene.aurius.logback;
 
 import java.io.File;
-import java.net.MalformedURLException;
-import java.net.URISyntaxException;
-import java.net.URL;
-
-import javax.naming.InitialContext;
-import javax.naming.NamingException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
+import org.springframework.beans.factory.InitializingBean;
 
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
@@ -41,11 +36,11 @@ import ch.qos.logback.core.joran.spi.JoranException;
 import ch.qos.logback.core.util.StatusPrinter;
 
 import com.farmafene.aurius.core.IAuriusSLF4JFactory;
+import com.farmafene.aurius.server.Configuracion;
 
 public class AuriusLogbackFactory implements IAuriusSLF4JFactory,
-		DisposableBean {
+		DisposableBean, InitializingBean {
 
-	private static final String JNDI_AURIUS_CONF = "java:comp/env/farmafene.com/aurius/conf";
 	private static final Logger logger = LoggerFactory
 			.getLogger(AuriusLogbackFactory.class);
 
@@ -70,6 +65,16 @@ public class AuriusLogbackFactory implements IAuriusSLF4JFactory,
 	/**
 	 * {@inheritDoc}
 	 * 
+	 * @see org.springframework.beans.factory.InitializingBean#afterPropertiesSet()
+	 */
+	@Override
+	public void afterPropertiesSet() throws Exception {
+		this.reset();
+	}
+
+	/**
+	 * {@inheritDoc}
+	 * 
 	 * @see org.springframework.beans.factory.DisposableBean#destroy()
 	 */
 	@Override
@@ -87,34 +92,22 @@ public class AuriusLogbackFactory implements IAuriusSLF4JFactory,
 		logger.info("reset() - Begin");
 		LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
 		try {
-			Object obj = new InitialContext().lookup(JNDI_AURIUS_CONF);
-			File f = null;
-			URL url = null;
-			if (obj != null && (obj instanceof String)) {
-				try {
-					url = new URL((String) obj);
-				} catch (MalformedURLException e) {
-					logger.error("Error en la url: " + obj);
-				}
-			}
-			if (obj != null && (obj instanceof URL)) {
-				url = (URL) obj;
-			}
-			f = new File(url.toURI());
+			File f = new File(Configuracion.getConfigPath());
 			logger.debug("El fichero es: " + f);
 			if (f != null) {
 				JoranConfigurator configurator = new JoranConfigurator();
 				configurator.setContext(lc);
 				lc.reset();
-				configurator.doConfigure(new File(f.getParent(), "logback.xml")
-						.getPath());
+				String confFile = Configuracion
+						.getProperty(com.farmafene.aurius.core.IAuriusSLF4JFactory.class
+								.getCanonicalName() + "_file");
+				if (null == confFile) {
+					confFile = "logback.xml";
+				}
+				configurator.doConfigure(new File(f, confFile).getPath());
 			}
 		} catch (JoranException je) {
 			je.printStackTrace();
-		} catch (NamingException e) {
-			e.printStackTrace();
-		} catch (URISyntaxException e) {
-			e.printStackTrace();
 		}
 		StatusPrinter.printInCaseOfErrorsOrWarnings(lc);
 		logger.info("reset() - End");
