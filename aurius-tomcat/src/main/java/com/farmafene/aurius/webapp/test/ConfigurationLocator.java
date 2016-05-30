@@ -25,10 +25,16 @@ package com.farmafene.aurius.webapp.test;
 
 import java.io.File;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import com.farmafene.aurius.server.Configuracion;
 import com.farmafene.commons.j2ee.tools.activemq.IConfigurationLocator;
 
 public class ConfigurationLocator implements IConfigurationLocator {
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(ConfigurationLocator.class);
 
 	public ConfigurationLocator() {
 	}
@@ -41,7 +47,9 @@ public class ConfigurationLocator implements IConfigurationLocator {
 	@Override
 	public String getFile(String config) {
 		String base = Configuracion.getConfigPath();
-		return base + File.separator + config;
+		String baseConfig = base + File.separator + config;
+		logger.info("La localización de la configuración del broker está en '{}'");
+		return baseConfig;
 	}
 
 }

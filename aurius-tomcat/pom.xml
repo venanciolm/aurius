@@ -22,8 +22,23 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>jcl-over-slf4j</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>com.farmafene.aurius.commons.impl</groupId>
 			<artifactId>aurius-ioc-spring</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-context</artifactId>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>com.farmafene.commons</groupId>
+			<artifactId>commons-j2ee-tools</artifactId>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
@@ -37,6 +52,11 @@
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
+			<groupId>com.farmafene.aurius.impl</groupId>
+			<artifactId>aurius-impl-core</artifactId>
+			<scope>compile</scope>
+		</dependency>
+		<dependency>
 			<groupId>ch.qos.logback</groupId>
 			<artifactId>logback-classic</artifactId>
 			<scope>compile</scope>
@@ -45,6 +65,13 @@
 			<groupId>org.apache.activemq</groupId>
 			<artifactId>activemq-core</artifactId>
 			<scope>compile</scope>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.geronimo.specs</groupId>
+			<artifactId>geronimo-jms_1.1_spec</artifactId>
+			<scope>compile</scope>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.geronimo.specs</groupId>
