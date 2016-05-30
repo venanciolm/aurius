@@ -37,17 +37,17 @@ import com.farmafene.aurius.AuriusAuthException;
  */
 public class RestCasClientTestJunit {
 
-	private static final String USER_NAME = "<USER>";
-	private static final String PWD = "<PASSWORD>";
-	private static final String CAS_SERVER = "<SERVICE>";
+	private static final String USER_NAME = "vlopezm";
+	private static final String PWD = "vlm##2016";
+	private static final String CAS_SERVER = "https://visor-dev.seinsir.indra.es/cas";
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestCasClientTestJunit.class);
 
 	@Test
 	public void main() throws IOException {
-		String service1 = "https://<example1>.yourdomain";
-		String service2 = "https://<example2>.yourdomain";
-		String service3 = "https://<example3>.yourdomain";
+		String service1 = "https://<example1>.seinsir.indra.es";
+		String service2 = "https://<example2>.seinsir.indra.es";
+		String service3 = "https://<example3>.seinsir.indra.es";
 		RestCasClient client = new RestCasClient();
 		client.setServerBase(CAS_SERVER);
 
@@ -104,11 +104,11 @@ public class RestCasClientTestJunit {
 		logger.info("La respuesta es: '{}'", response);
 		Assert.assertEquals(USER_NAME, response);
 		//
-		// ticket = client.getServiceTicket(tgt, service3);
-		// logger.info("El ticket 4 es:  '{}'", ticket);
-		// response = client.proxyValidate(service3, ticket);
-		// logger.info("La respuesta es: '{}'", response);
-		// Assert.assertEquals(USER_NAME, response);
+		ticket = client.getProxyServiceTicket(tgt, service3);
+		logger.info("El ticket 4 es:  '{}'", ticket);
+		response = client.proxyValidate(service3, ticket);
+		logger.info("La respuesta es: '{}'", response);
+		Assert.assertEquals(USER_NAME, response);
 		client.logout(tgt);
 	}
 }
