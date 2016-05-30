@@ -25,13 +25,12 @@ package com.farmafene.aurius.webapp.test;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
-import javax.transaction.TransactionManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.farmafene.aurius.core.AuriusContainerSubject;
-import com.farmafene.aurius.server.Configuracion;
+import com.farmafene.aurius.core.IAuriusSLF4JFactory;
 import com.farmafene.commons.ioc.BeanFactory;
 
 public class WatchDogListener implements ServletContextListener {
@@ -50,7 +49,8 @@ public class WatchDogListener implements ServletContextListener {
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		logger.info("contextInitialized({})", sce);
-		BeanFactory.getIBeanFactory().getBean(TransactionManager.class);
+		BeanFactory.getIBeanFactory().getBean(
+				IAuriusSLF4JFactory.class);
 		AuriusContainerSubject.start();
 	}
 
@@ -65,5 +65,4 @@ public class WatchDogListener implements ServletContextListener {
 		AuriusContainerSubject.stop();
 
 	}
-
 }

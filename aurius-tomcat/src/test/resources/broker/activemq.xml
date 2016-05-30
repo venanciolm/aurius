@@ -33,8 +33,8 @@
 		</amq:persistenceAdapter>
 
 		<amq:transportConnectors>
-			<!-- <amq:transportConnector name="openwire" -->
-			<!-- uri="tcp://0.0.0.0:61616" /> -->
+			<amq:transportConnector name="openwire"
+				uri="tcp://0.0.0.0:61616" />
 			<!-- <amq:transportConnector name="stomp" uri="stomp://localhost:61613" 
 				/> -->
 		</amq:transportConnectors>
