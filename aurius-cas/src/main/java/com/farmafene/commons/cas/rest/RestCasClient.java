@@ -24,6 +24,7 @@
 package com.farmafene.commons.cas.rest;
 
 import java.io.BufferedReader;
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -53,14 +54,21 @@ import com.farmafene.aurius.AuriusAuthException;
 
 public class RestCasClient {
 
-	private static final String YES = "yes";
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(RestCasClient.class);
 
 	private static enum Method {
 		POST, PUT, DELETE, GET
 	};
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(RestCasClient.class);
+	private static final String RESP_PATH_DEFAULT = "/v1/tickets";
+	private static final String USER = "user";
+	private static final String TARGET_SERVICE = "targetService";
+	private static final String PGT = "pgt";
+	private static final String PROXY_TICKET = "proxyTicket";
+	private static final String YES = "yes";
+	private static final int EOF = -1;
 	private static final String REGEXP_TGT = ".*action=\".*/(.*?)\".*";
 	private static final String USERNAME = "username";
 	private static final String PASSWORD = "password";
@@ -73,8 +81,9 @@ public class RestCasClient {
 	private static final String CONTENT_LENGTH = "Content-Length";
 	private static final String CONTENT_TYPE = "Content-Type";
 	private static final String ACCEPT_ENCODING = "Accept-Encoding";
+
 	private String serverBase;
-	private String restServlet = "/v1/tickets";
+	private String restServlet = RESP_PATH_DEFAULT;
 	private String encoding = ENCODING;
 	private int connectTimeoutMs = CONNECT_TIMEOUT_DEFAULT;
 	private int readTimeoutMs = READ_TIMEOUT_DEFAULT;
@@ -129,6 +138,21 @@ public class RestCasClient {
 			sb.append(URLEncoder.encode(items.get(var), enc));
 		}
 		return sb.toString();
+	}
+
+	private String getFromInputStream(InputStream a)
+			throws UnsupportedEncodingException {
+		byte buffer[] = new byte[512];
+		int read = EOF;
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		try {
+			while ((read = a.read(buffer)) != EOF) {
+				baos.write(buffer, 0, read);
+			}
+		} catch (IOException e) {
+			logger.error("Error en la lectura!", e);
+		}
+		return baos.toString(encoding);
 	}
 
 	/**
@@ -202,7 +226,6 @@ public class RestCasClient {
 	public String getTicketGrantingTicket(String username, String password)
 			throws AuriusAuthException {
 		HttpURLConnection con = null;
-		InputStream is = null;
 		String response = null;
 		try {
 			con = getHttpConnection(serverBase + restServlet, Method.POST,
@@ -225,11 +248,7 @@ public class RestCasClient {
 					responseCode);
 			switch (responseCode) {
 			case HttpURLConnection.HTTP_CREATED:
-				// reading the TGT
-				is = con.getInputStream();
-				InputStreamReader isr = new InputStreamReader(is);
-				BufferedReader br = new BufferedReader(isr);
-				response = br.readLine();
+				response = getFromInputStream(con.getInputStream());
 				Matcher matcher = Pattern.compile(REGEXP_TGT).matcher(response);
 				if (matcher.matches()) {
 					response = matcher.group(1);
@@ -314,8 +333,8 @@ public class RestCasClient {
 		HttpURLConnection con = null;
 		try {
 			Map<String, String> items = new HashMap<String, String>();
-			items.put("pgt", ticketGrantingTicket);
-			items.put("targetService", service);
+			items.put(PGT, ticketGrantingTicket);
+			items.put(TARGET_SERVICE, service);
 			String urlParameters = urlEncode(items, encoding);
 			con = getHttpConnection(serverBase + "/proxy?" + urlParameters,
 					Method.GET, connectTimeoutMs, readTimeoutMs, encoding,
@@ -328,11 +347,8 @@ public class RestCasClient {
 					responseCode);
 			switch (responseCode) {
 			case HttpURLConnection.HTTP_OK:
-				// reading the ticket
-				InputStreamReader isr = new InputStreamReader(
-						con.getInputStream());
-				BufferedReader br = new BufferedReader(isr);
-				ticket = br.readLine();
+				String xmlAsString = getFromInputStream(con.getInputStream());
+				ticket = getTextForElement(xmlAsString, PROXY_TICKET);
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
 			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
@@ -415,20 +431,12 @@ public class RestCasClient {
 			con.setUseCaches(false);
 			con.connect();
 			int responseCode = con.getResponseCode();
-			logger.debug("El response de validate es: '{}'", responseCode);
+			logger.debug("El response de proxyValidate es: '{}'", responseCode);
 			switch (responseCode) {
 			case HttpURLConnection.HTTP_OK:
-				InputStreamReader isr = new InputStreamReader(
-						con.getInputStream());
-				BufferedReader br = new BufferedReader(isr);
-				String line = br.readLine();
-				if (YES.equals(line)) {
-					user = line;
-				} else {
-					logger.info(line);
-					while (br.ready()) {
-						logger.info(br.readLine());
-					}
+				String xmlAsString = getFromInputStream(con.getInputStream());
+				user = getTextForElement(xmlAsString, USER);
+				if (null == user || "".equals(user)) {
 					throw new AuriusAuthException("Invalid ticket: " + service
 							+ "-" + serviceTicket);
 				}

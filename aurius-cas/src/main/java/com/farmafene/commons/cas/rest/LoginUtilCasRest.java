@@ -37,8 +37,12 @@ import com.farmafene.commons.cas.AuthInfoLoginPassword;
 public class LoginUtilCasRest implements ILoginUtil, IOnInitValidate,
 		IWrapperClass {
 
+	private static final String USER_PASSWORD_PROP = "user.password";
+	private static final String USER_LOGIN_PROP = "user.login";
+	private static final String RESP_PATH_DEFAULT = "/v1/tickets";
+	
 	private String casServerURL;
-	private String restPath = "/v1/tickets";
+	private String restPath = RESP_PATH_DEFAULT;
 	private RestCasClient client;
 	private IWrapperClass wrapperClass;
 
@@ -83,8 +87,8 @@ public class LoginUtilCasRest implements ILoginUtil, IOnInitValidate,
 		AuthInfoLoginPassword pass = null;
 		try {
 			pass = new AuthInfoLoginPassword();
-			pass.setLogin(props.getProperty("user.login"));
-			pass.setPassword(props.getProperty("user.password"));
+			pass.setLogin(props.getProperty(USER_LOGIN_PROP));
+			pass.setPassword(props.getProperty(USER_PASSWORD_PROP));
 		} catch (Throwable th) {
 			throw new AuriusAuthException(th);
 		}
