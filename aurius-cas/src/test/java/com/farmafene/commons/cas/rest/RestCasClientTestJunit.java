@@ -104,11 +104,54 @@ public class RestCasClientTestJunit {
 		logger.info("La respuesta es: '{}'", response);
 		Assert.assertEquals(USER_NAME, response);
 		//
-		ticket = client.getProxyServiceTicket(tgt, service3);
-		logger.info("El ticket 4 es:  '{}'", ticket);
+		logger.info("");
+		logger.info("");
+		logger.info("============ obteniendo pgt =============");
+		logger.info("");
+		ServiceValidateResponse out = null;
+		ticket = client.getServiceTicket(tgt, service3);
+		logger.info("El proxy ticket es:  '{}'", ticket);
+		out = client
+				.serviceValidate(service3, ticket, CAS_SERVER + "/casProxy");
+		logger.info("La respuesta es: '{}'", out);
+		logger.info("");
+		logger.info("");
+		logger.info("=========== trabajando con pgt ==========");
+		logger.info("");
+		ticket = client.getProxyServiceTicket(out.getProxyGrantingTicket(),
+				service1);
+		logger.info("La respuesta es: '{}'", ticket);
+		response = client.proxyValidate(service1, ticket);
+		logger.info("La respuesta es: '{}'", response);
+		Assert.assertEquals(USER_NAME, response);
+		ticket = client.getProxyServiceTicket(out.getProxyGrantingTicket(),
+				service2);
+		logger.info("La respuesta es: '{}'", ticket);
+		response = client.proxyValidate(service2, ticket);
+		logger.info("La respuesta es: '{}'", response);
+		Assert.assertEquals(USER_NAME, response);
+		ticket = client.getProxyServiceTicket(out.getProxyGrantingTicket(),
+				service3);
+		logger.info("La respuesta es: '{}'", ticket);
 		response = client.proxyValidate(service3, ticket);
 		logger.info("La respuesta es: '{}'", response);
 		Assert.assertEquals(USER_NAME, response);
+		logger.info("");
+		logger.info("");
+		logger.info("=========================================");
+		logger.info("");
 		client.logout(tgt);
+		logger.info(" tgt: {}",tgt);
+		logger.info(" pgt: {}",out.getProxyGrantingTicket());
+		logger.info("");
+		logger.info("");
+		logger.info("=========================================");
+		logger.info("");
+		ticket = client.getProxyServiceTicket(out.getProxyGrantingTicket(),
+				service2);
+		logger.info("La respuesta es: '{}'", ticket);
+		response = client.proxyValidate(service2, ticket);
+		logger.info("La respuesta es: '{}'", response);
+		Assert.assertEquals(USER_NAME, response);
 	}
 }

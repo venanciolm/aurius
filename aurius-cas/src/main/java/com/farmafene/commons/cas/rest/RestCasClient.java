@@ -54,7 +54,6 @@ import com.farmafene.aurius.AuriusAuthException;
 
 public class RestCasClient {
 
-
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestCasClient.class);
 
@@ -348,6 +347,7 @@ public class RestCasClient {
 			switch (responseCode) {
 			case HttpURLConnection.HTTP_OK:
 				String xmlAsString = getFromInputStream(con.getInputStream());
+				logger.info("Devolviendo : \n{}", xmlAsString);
 				ticket = getTextForElement(xmlAsString, PROXY_TICKET);
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
@@ -455,6 +455,109 @@ public class RestCasClient {
 			}
 		}
 		return user;
+	}
+
+	public String serviceValidate(String service, String serviceTicket) {
+		return serviceValidate(service, serviceTicket, null).getUser();
+	}
+
+	public ServiceValidateResponse serviceValidate(String service,
+			String serviceTicket, String proxyCallbackUrl)
+			throws AuriusAuthException {
+		ServiceValidateResponse user = null;
+		Map<String, String> items = new HashMap<String, String>();
+		items.put(TICKET, serviceTicket);
+		items.put(SERVICE, service);
+		if (null != proxyCallbackUrl) {
+			items.put("pgtUrl", proxyCallbackUrl);
+		}
+		HttpURLConnection con = null;
+		try {
+			String urlParameters = urlEncode(items, encoding);
+			if (logger.isDebugEnabled()) {
+				logger.debug("Invocando: {}", this.serverBase
+						+ (this.serverBase.endsWith("/") ? "" : "/")
+						+ "serviceValidate?" + urlParameters);
+			}
+			con = getHttpConnection(
+					this.serverBase
+							+ (this.serverBase.endsWith("/") ? "" : "/")
+							+ "serviceValidate?" + urlParameters, Method.GET,
+					connectTimeoutMs, readTimeoutMs, encoding, CONTENT_TYPE);
+			con.setUseCaches(false);
+			con.connect();
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de serviceValidate es: '{}'",
+					responseCode);
+			switch (responseCode) {
+			case HttpURLConnection.HTTP_OK:
+				String xmlAsString = getFromInputStream(con.getInputStream());
+				logger.info("El valor Devuelto es: \n{}", xmlAsString);
+				user = new ServiceValidateResponse();
+				user.setUser(getTextForElement(xmlAsString, USER));
+				user.setProxyGrantingTicket(getProxyTicket(proxyCallbackUrl,
+						getTextForElement(xmlAsString, "proxyGrantingTicket")));
+				if (null == user || "".equals(user)) {
+					throw new AuriusAuthException("Invalid ticket: " + service
+							+ "-" + serviceTicket);
+				}
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
+			default:
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
+			}
+		} catch (IOException e) {
+			throw new AuriusAuthException(e);
+		} finally {
+			if (null != con) {
+				con.disconnect();
+			}
+		}
+		return user;
+	}
+
+	private String getProxyTicket(String proxyCallbackUrl, String pgtIou) {
+		Map<String, String> items = new HashMap<String, String>();
+		items.put("pgtIou", pgtIou);
+		HttpURLConnection con = null;
+		String pgt = null;
+		try {
+			logger.debug("La url en get es: {}?{}", proxyCallbackUrl, pgtIou);
+			String urlParameters = urlEncode(items, encoding);
+			con = getHttpConnection(proxyCallbackUrl + "?" + urlParameters,
+					Method.GET, connectTimeoutMs, readTimeoutMs, encoding,
+					CONTENT_TYPE);
+			con.setUseCaches(false);
+			con.connect();
+			int responseCode = con.getResponseCode();
+			logger.debug("El response de getProxyTicket es: '{}'", responseCode);
+			switch (responseCode) {
+			case HttpURLConnection.HTTP_OK:
+				InputStreamReader isr = new InputStreamReader(
+						con.getInputStream());
+				BufferedReader br = new BufferedReader(isr);
+				pgt = br.readLine();
+				if (null == pgt || "".equals(pgt.trim())) {
+					throw new AuriusAuthException("Invalid pgtIou: "
+							+ proxyCallbackUrl + "-" + pgtIou);
+				}
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+			case HttpURLConnection.HTTP_UNSUPPORTED_TYPE:
+			default:
+				throw new AuriusAuthException("Invalid request " + responseCode
+						+ " - " + con.getResponseMessage());
+			}
+		} catch (IOException e) {
+			throw new AuriusAuthException(e);
+		} finally {
+			if (null != con) {
+				con.disconnect();
+			}
+		}
+		return pgt;
 	}
 
 	public void logout(String ticketGrantingTicket) throws AuriusAuthException {
