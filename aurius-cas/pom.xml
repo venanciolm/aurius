@@ -65,6 +65,12 @@
 			<artifactId>logback-classic</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- http://mvnrepository.com/artifact/cas/casclient -->
+		<dependency>
+			<groupId>cas</groupId>
+			<artifactId>casclient</artifactId>
+			<version>2.1.1</version>
+		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
