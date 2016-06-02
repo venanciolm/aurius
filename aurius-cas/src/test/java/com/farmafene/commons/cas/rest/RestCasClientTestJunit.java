@@ -37,17 +37,17 @@ import com.farmafene.aurius.AuriusAuthException;
  */
 public class RestCasClientTestJunit {
 
-	private static final String USER_NAME = "vlopezm";
-	private static final String PWD = "vlm##2016";
-	private static final String CAS_SERVER = "https://visor-dev.seinsir.indra.es/cas";
+	private static final String USER_NAME = "<user>";
+	private static final String PWD = "<password>";
+	private static final String CAS_SERVER = "https://<cas server.mydomain</cas path>";
 	private static final Logger logger = LoggerFactory
 			.getLogger(RestCasClientTestJunit.class);
 
 	@Test
 	public void main() throws IOException {
-		String service1 = "https://<example1>.seinsir.indra.es";
-		String service2 = "https://<example2>.seinsir.indra.es";
-		String service3 = "https://<example3>.seinsir.indra.es";
+		String service1 = "https://<example1>.mydomain";
+		String service2 = "https://<example2>.mydomain";
+		String service3 = "https://<example3>.mydomain";
 		RestCasClient client = new RestCasClient();
 		client.setServerBase(CAS_SERVER);
 
